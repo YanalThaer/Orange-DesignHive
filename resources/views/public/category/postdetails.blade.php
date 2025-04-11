@@ -88,17 +88,26 @@ $imagePath = Str::startsWith($imagePath, ['http://', 'https://']) ? $imagePath :
                   </p>
                 </div>
                 <div class="meta-bottom">
-                  <div class="tags-section">
-                    <h4>Tages</h4>
-                    <div class="tags">
+                  <div class="tags-section mt-4">
+                    <h4 class="mb-3 text-secondary">Tags</h4>
+                    <ul class="list-unstyled d-flex flex-wrap gap-2">
                       @if ($project->tags->isEmpty())
-                      <span class="no-tags">No tags available</span>
+                      <li><span class="text-muted fst-italic">No tags available</span></li>
                       @else
-                      @foreach ($project->tags as $tag)
-                      <a href="#" class="tag">{{ $tag->name ?? 'No Tag' }}</a>
+                      @foreach($project->tags as $tag)
+                      @php
+                      $tagname = $tag->name ?: 'No Tag';
+                      @endphp
+                      <li>
+                        <a href="{{ route('projects.byTag', $tag->id) }}"
+                          class="text-decoration-none px-3 py-2 rounded-pill d-inline-block"
+                          style="background-color: #dee2e6; color: #333; font-size: 0.9rem;">
+                          #{{ $tagname }}
+                        </a>
+                      </li>
                       @endforeach
                       @endif
-                    </div>
+                    </ul>
                   </div>
                 </div>
               </div>

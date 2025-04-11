@@ -41,31 +41,34 @@
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script src="{{ asset('assets/js/home.js') }}"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll(".like-btn").forEach(button => {
-      button.addEventListener("click", async function() {
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".like-btn").forEach((button) => {
+      button.addEventListener("click", async function () {
         let projectId = this.getAttribute("data-project-id");
-        let likeIcon = this.querySelector(".like-icon");
+        let likeIcon = this.querySelector("i");
         let likeCount = this.querySelector(".like-count");
+
         try {
           let response = await fetch("{{ route('toggle.like') }}", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+              "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
             },
             body: JSON.stringify({
-              project_id: projectId
-            })
+              project_id: projectId,
+            }),
           });
+
           let data = await response.json();
+
+          // استبدال الأيقونة حسب حالة اللايك
           if (data.liked) {
-            likeIcon.classList.add("text-danger");
-            likeIcon.classList.remove("text-black");
+            likeIcon.className = "bi bi-heart-fill fs-4 text-danger";
           } else {
-            likeIcon.classList.add("text-black");
-            likeIcon.classList.remove("text-danger");
+            likeIcon.className = "bi bi-heart fs-4 text-muted";
           }
+
           likeCount.textContent = data.likes_count;
         } catch (error) {
           console.error("Error:", error);

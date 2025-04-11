@@ -1,4 +1,4 @@
-<div class="col-lg-4 sidebar">
+<div class="col-lg-3 sidebar">
     <div class="widgets-container" data-aos="fade-up" data-aos-delay="200">
         <div class="categories-widget widget-item">
             <h3 class="widget-title">Categories</h3>
@@ -46,7 +46,7 @@
                 $tagname = $tag->name;
                 }
                 @endphp
-                <li><a href="">#{{ $tagname }}</a></li>
+                <li><a href="{{ route('projects.byTag', $tag->id) }}">#{{ $tagname }}</a></li>
                 @endforeach
                 @endif
             </ul>

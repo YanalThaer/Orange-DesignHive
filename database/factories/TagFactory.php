@@ -18,7 +18,7 @@ class TagFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'user_id' => fake()->numberBetween(1,10),
+            'admin_id' => fake()->numberBetween(1,2),
             
         ];
     }

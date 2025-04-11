@@ -83,7 +83,7 @@
                     <hr>
                     <a href="{{ route('profile', Auth::user()->id) }}" class="text-start text-dark"><i class="bi bi-person"></i> show profile</a>
                     <hr>
-                    <form id="logout-form" action="{{ route('yanal') }}" method="POST" style="display: none;">
+                    <form id="logout-form" action="{{ route('logoutusers') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
                     <a href="#" class="btn ms-4 rounded-pill px-4 py-2" style=""

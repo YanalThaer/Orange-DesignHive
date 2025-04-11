@@ -14,6 +14,8 @@ class CommentController extends Controller
     public function index()
     {
         //
+        $comments = Comment::with('user')->whereNull('deleted_at')->get(); // Exclude soft-deleted records
+        return view('admin.comments.index', compact('comments'));
     }
 
     /**
@@ -38,6 +40,7 @@ class CommentController extends Controller
     public function show(Comment $comment)
     {
         //
+        return view('admin.comments.show', compact('comment'));
     }
 
     /**
@@ -62,5 +65,7 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         //
+        $comment->delete(); // Perform a soft delete
+        return redirect()->route('comments.index')->with('success', 'Comment deleted successfully.');
     }
 }

@@ -119,10 +119,10 @@
                   <span><i class="bi bi-chat-dots"></i>
                     {{ $comments_count }}</span>
                 </div>
-                <h2>
+                <!-- <h2>
                   <a href="{{ route('project.details', $project->id) }}">{{ $title }}</a>
-                </h2>
-                <p>{{ Str::limit(strip_tags($description), 120) }}</p>
+                </h2> -->
+                <!-- <p>{{ Str::limit(strip_tags($description), 120) }}</p> -->
                 <a href="{{ route('project.details', $project->id) }}" class="read-more">
                 Show project <i class="bi bi-arrow-right"></i>
                 </a>
@@ -151,6 +151,8 @@
           <div class="col-lg-4 project-item">
             @include('layouts.public.__projects', ['project' => $project])
           </div>
+
+       
         @endforeach
       @endif
     </div>
@@ -249,24 +251,11 @@
     </script>
   </section>
   
+  <style>
+    .modal-backdrop {
+        background-color: #000 !important;
+        opacity: 0.5 !important;/* Ensure it's visible */
+    }
+  </style>
 </main>
-<!-- Modal -->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="loginModalLabel">Login</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        محتوى تسجيل الدخول أو أي شي بدك إياه
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-        <button type="button" class="btn btn-primary">تسجيل</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 @endsection

@@ -8,7 +8,8 @@
       <p>Welcome to our creative space where designers from all over the world come together to showcase their work, collaborate, and inspire each other.</p>
     </div>
   </div>
-  <section id="about" class="about section">
+
+  <section id="about" class="about section ">
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       <span class="section-badge"><i class="bi bi-info-circle"></i> About Us</span>
       <div class="row">
@@ -52,7 +53,7 @@
       </div>
     </div>
   </section>
-  <section id="team" class="team section light-background">
+  <!-- <section id="team" class="team section light-background">
     <div class="container section-title" data-aos="fade-up">
       <h2>Our Designers</h2>
       <div><span>Meet Our</span> <span class="description-title">Creative Team</span></div>
@@ -169,6 +170,6 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 </main>
 @endsection

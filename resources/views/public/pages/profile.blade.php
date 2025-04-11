@@ -106,18 +106,6 @@
                 <p>
                   {{ $bio }}
                 </p>
-                <div class="expertise-areas">
-                  <h4>Areas of Expertise</h4>
-                  <div class="tags">
-                    @if ($user->tags->isEmpty())
-                    <span class="no-tags">No tags available</span>
-                    @else
-                    @foreach($user->tags as $tag)
-                    <span>{{ $tag->name ?? 'No Tags Name' }}</span>
-                    @endforeach
-                    @endif
-                  </div>
-                </div>
                 <div class="featured-articles mt-5">
                   <h4>Projects</h4>
                   <div class="row g-4">

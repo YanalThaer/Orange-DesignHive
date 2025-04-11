@@ -6,6 +6,13 @@ use App\Http\Controllers\LikeController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UserController;
 
 
 Auth::routes();
@@ -41,6 +48,7 @@ Route::post('/contact/store',[HomeController::class, 'storeContact'])->name('sto
 Route::get('/project-details/{id}', [HomeController::class, 'showProject'])->name('project.details');
 
 Route::get('/post/{id}',[HomeController::class, 'post'])->name('category.posts');
+Route::get('/projects/tag/{tagId}', [HomeController::class, 'filterByTag'])->name('projects.byTag');
 
 Route::get('/profile/{id}',[HomeController::class, 'profile'])->name('profile');
 
@@ -55,7 +63,7 @@ Route::post('/project-comments/{id}', [HomeController::class, 'storeComments'])-
 Route::get('/subecribtion', [HomeController::class, 'subecribtion'])->name('subecribtion');
 Route::get('/payment', [HomeController::class, 'payment'])->name('payment');
 
-Route::post('/destroy', [LoginController::class, 'destroy'])->name('yanal');
+Route::post('/destroy', [LoginController::class, 'destroy'])->name('logoutusers');
 
 Route::get('/verify-email', [RegisterController::class, 'verifyEmail'])->name('verify.email.form');
 
@@ -66,17 +74,13 @@ Route::get('/auth/google/callback', [RegisterController::class, 'handleGoogleCal
 
 
 // admin
-
 Route::prefix('admin')->middleware('isAdmin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('admin.dashboard');
-
-    Route::get('/categories', function () {
-        return view('admin.categories.index');
-    });
-
-    Route::get('/posts', function () {
-        return view('admin.posts.index');
-    });
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::resource('admins', AdminController::class)->middleware('superadmin');
+    Route::resource('categories', CategoryController::class);
+    Route::resource('comments', CommentController::class);
+    Route::resource('payments', PaymentController::class);
+    Route::resource('projects', ProjectController::class);
+    // Route::resource('subscriptions', SubscriptionController::class);
+    Route::resource('users', UserController::class);
 });

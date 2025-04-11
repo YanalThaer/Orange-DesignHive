@@ -22,7 +22,7 @@
 <main class="main">
   <div class="container">
     <div class="row">
-      <div class="col-lg-8">
+      <div class="col-lg-9">
         <section id="category-postst" class="category-postst section">
           <div class="container" data-aos="fade-up" data-aos-delay="100">
             <div class="row gy-4">

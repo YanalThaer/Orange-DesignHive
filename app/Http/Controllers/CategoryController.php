@@ -13,7 +13,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        
+        $categories = Category::whereNull('deleted_at')->get(); // Exclude soft-deleted records
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
@@ -22,6 +23,7 @@ class CategoryController extends Controller
     public function create()
     {
         //
+        return view('admin.categories.create');
     }
 
     /**
@@ -30,6 +32,20 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|url', // Validate image as a URL
+        ]);
+    
+        Category::create([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'image' => $request->input('image'), // Save the image URL directly
+            'admin_id' => $request->input('admin_id'),
+        ]);
+    
+        return redirect()->route('categories.index')->with('success', 'Category created successfully.');  
     }
 
     /**
@@ -38,6 +54,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         //
+        return view('admin.categories.show', compact('category'));
     }
 
     /**
@@ -46,6 +63,7 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         //
+        return view('admin.categories.edit', compact('category'));
     }
 
     /**
@@ -54,6 +72,19 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|url', // Validate image as a URL
+        ]);
+    
+        $category->update([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'image' => $request->input('image'), // Update the image URL directly
+        ]);
+    
+        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');  
     }
 
     /**
@@ -62,6 +93,8 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+        $category->delete(); // Perform a soft delete
+        return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
     }
 
  

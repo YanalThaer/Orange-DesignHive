@@ -12,6 +12,7 @@ use App\Models\Message;
 use App\Models\Like;
 use Illuminate\Support\Facades\Mail; // Add this if you intend to use Laravel's Mail facade
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Routing\Controller;
 
@@ -86,7 +87,7 @@ class HomeController extends Controller
       'comments' => function ($query) {
         $query->orderByDesc('created_at');
       },
-      'comments.user'
+      'comments.user',
     ])
       ->withCount('likes')
       ->withCount('comments')
@@ -208,6 +209,56 @@ class HomeController extends Controller
     ))->with('currentCategoryId', $id);
   }
 
+  public function filterByTag($tagId)
+  {
+    $categories = Category::all();
+    $tags = Tag::all();
+
+    $projects = Project::whereHas('tags', function ($query) use ($tagId) {
+      $query->where('tags.id', $tagId);
+    })
+      ->withCount('likes')
+      ->withCount('comments')
+      ->with('userLike')
+      ->paginate(10);
+
+    $unreadUsers = Message::where('receiver_id', Auth::id())
+      ->where('is_read', false)
+      ->groupBy('sender_id')
+      ->get(['sender_id']);
+
+    $unreadUsersCount = $unreadUsers->count();
+    $unreadUsersDetails = User::whereIn('id', $unreadUsers->pluck('sender_id'))->get();
+
+    $totalProjects = Project::count();
+
+    foreach ($categories as $category) {
+      $category->projects_count = Project::where('category_id', $category->id)->count();
+    }
+
+    if (Auth::check()) {
+      $user = Auth::user();
+      $likesOnMyProjects = Like::with(['user', 'project'])
+        ->whereIn('project_id', $user->projects->pluck('id'))
+        ->get();
+
+      $likesCount = $likesOnMyProjects->count();
+    } else {
+      $likesOnMyProjects = null;
+      $likesCount = 0;
+    }
+
+    return view('public.category.posts', compact(
+      'categories',
+      'tags',
+      'projects',
+      'unreadUsersCount',
+      'unreadUsersDetails',
+      'totalProjects',
+      'likesOnMyProjects',
+      'likesCount'
+    ))->with('currentTagId', $tagId);
+  }
 
   public function profile($id)
   {
@@ -351,6 +402,7 @@ class HomeController extends Controller
   public function addProject()
   {
     $categories = Category::all();
+    $tags = Tag::all();
     $unreadUsers = Message::where('receiver_id', Auth::id())
       ->where('is_read', false)
       ->groupBy('sender_id')
@@ -371,7 +423,7 @@ class HomeController extends Controller
       $likesOnMyProjects = null;
       $likesCount = 0;
     }
-    return view('public.category.addproject', compact('categories', 'unreadUsersCount', 'unreadUsersDetails', 'likesOnMyProjects', 'likesCount'));
+    return view('public.category.addproject', compact('categories', 'unreadUsersCount', 'unreadUsersDetails', 'likesOnMyProjects', 'likesCount', 'tags'));
   }
 
   public function storeProject(Request $request)
@@ -381,23 +433,22 @@ class HomeController extends Controller
       'description' => 'nullable|string',
       'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
       'category_id' => 'required|exists:categories,id',
+      'tags' => 'nullable|array',
+      'tags.*' => 'exists:tags,id',
     ]);
 
-    // رفع الصورة إذا كانت مرفوعة
     if ($request->hasFile('image')) {
       $image = $request->file('image');
       $folder = 'projects';
-      $imageName = $image->getClientOriginalName(); // اسم الصورة الفريد
+      $imageName = $image->getClientOriginalName();
       $imagePath = "images/$folder/$imageName";
 
-      // تحقق إذا الملف غير موجود قبل النقل
       if (!file_exists(public_path($imagePath))) {
-        $image->move(public_path("images/$folder"), $imageName); // نقل الملف
+        $image->move(public_path("images/$folder"), $imageName);
       }
     } else {
       $imagePath = null;
     }
-
 
     $project = Project::create([
       'title' => $request->title,
@@ -407,8 +458,22 @@ class HomeController extends Controller
       'category_id' => $request->category_id,
     ]);
 
+    // إضافة التاجز في جدول project_tags
+    if ($request->filled('tags')) {
+      foreach ($request->tags as $tagId) {
+        DB::table('project_tags')->insert([
+          'user_id' => Auth::id(),
+          'project_id' => $project->id,
+          'tag_id' => $tagId,
+          'created_at' => now(),
+          'updated_at' => now(),
+        ]);
+      }
+    }
+
     return redirect()->route('category.posts', $project->category_id)->with('success', 'Project added successfully.');
   }
+
 
   public function indexChat($receiver_id)
   {
@@ -682,17 +747,17 @@ class HomeController extends Controller
         'instagram' => $request->instagram,
       ]);
     } else {
-        if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'The current password is incorrect.'])->withInput();
-        }
+      if (!Hash::check($request->current_password, $user->password)) {
+        return back()->withErrors(['current_password' => 'The current password is incorrect.'])->withInput();
+      }
 
-        $request->validate([
-            'new_password' => 'required|string|min:8|confirmed',
-        ]);
+      $request->validate([
+        'new_password' => 'required|string|min:8|confirmed',
+      ]);
 
-        $user->update([
-            'password' => Hash::make($request->new_password),
-        ]);
+      $user->update([
+        'password' => Hash::make($request->new_password),
+      ]);
     }
 
     return redirect()->route('usersprofile.edit', $user->id)->with('success', 'Profile updated successfully!')->withErrors('error', 'Password not updated successfully!');

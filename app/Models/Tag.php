@@ -16,7 +16,7 @@ class Tag extends Model
     ];
 
 
-    public function user()
+    public function admin()
     {
         return $this->belongsTo(User::class);
     }

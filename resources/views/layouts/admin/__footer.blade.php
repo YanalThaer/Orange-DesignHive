@@ -33,10 +33,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <form id="logout-form" action="{{ route('yanal') }}" method="POST">
-                        @csrf
-                    <button type="submit" class="btn btn-primary">Logout</button>
-                    </form>
+                    <a class="btn btn-primary" href="{{ route('logoutusers') }}">Logout</a>
                 </div>
             </div>
         </div>
@@ -64,6 +61,23 @@
 
     <script src="{{ asset('js/demo/datatables-demo.js') }}"></script>
 
+    <!-- Links for icons websites -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="https://kit.fontawesome.com/061a66bb6d.js" crossorigin="anonymous"></script>
+
+    <!-- A script for the duration of the success message -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessage = document.getElementById('success-message');
+            if (successMessage) {
+                setTimeout(() => {
+                    successMessage.style.transition = 'opacity 0.5s ease';
+                    successMessage.style.opacity = '0';
+                    setTimeout(() => successMessage.remove(), 500); // Remove the element after fading out
+                }, 3000); // 3000ms = 3 seconds
+            }
+        });
+    </script>
 
 </body>
 

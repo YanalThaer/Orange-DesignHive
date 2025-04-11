@@ -24,6 +24,15 @@
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 
+    <!-- Custom icons links for this template-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .fixed-width-btn {
+            min-width: 80px; 
+            text-align: center;
+        }
+    </style>
+    
 </head>
 
 <body id="page-top">
