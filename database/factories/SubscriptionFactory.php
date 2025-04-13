@@ -18,12 +18,10 @@ class SubscriptionFactory extends Factory
     {
         return [
             'user_id' => fake()->numberBetween(1,10),
-            'plan_id' => fake()->numberBetween(1,10),
+            'plan_id' => fake()->numberBetween(1,3),
             'start_date' => fake()->date(),
             'end_date' => fake()->date(),
             'status' => fake()->randomElement(['active', 'inactive']),
-            
-            
         ];
     }
 }

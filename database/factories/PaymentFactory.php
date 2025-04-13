@@ -22,8 +22,6 @@ class PaymentFactory extends Factory
             'payment_method' => fake()->randomElement(['visa', 'mastercard', 'paypal']),
             'status' => fake()->randomElement(['pending', 'completed', 'failed']),
             'transaction_id' => fake()->uuid(),
-            
-
         ];
     }
 }

@@ -12,35 +12,55 @@
         <div class="card-body">
             <table class="table table-bordered">
                 <tr>
-                    <th>ID</th>
+                    <th width="30%">Subscription ID</th>
                     <td>{{ $subscription->id }}</td>
                 </tr>
                 <tr>
                     <th>User</th>
-                    <td>{{ $subscription->user->name ?? 'Unknown' }} (ID: {{ $subscription->user_id }})</td>
+                    <td>
+                        {{ $subscription->user->name ?? 'Unknown' }}<br>
+                        <small class="text-muted">(ID: {{ $subscription->user_id }})</small>
+                    </td>
                 </tr>
                 <tr>
                     <th>Plan</th>
-                    <td>{{ $subscription->plan->name ?? 'Unknown' }} (ID: {{ $subscription->plan_id }})</td>
+                    <td>
+                        {{ $subscription->plan->name ?? 'Unknown' }}<br>
+                        <small class="text-muted">(ID: {{ $subscription->plan_id }})</small>
+                    </td>
                 </tr>
                 <tr>
                     <th>Start Date</th>
-                    <td>{{ $subscription->start_date }}</td>
+                    <td>{{ \Carbon\Carbon::parse($subscription->start_date)->format('F j, Y') }}</td>
                 </tr>
                 <tr>
                     <th>End Date</th>
-                    <td>{{ $subscription->end_date }}</td>
+                    <td>{{ \Carbon\Carbon::parse($subscription->end_date)->format('F j, Y') }}</td>
                 </tr>
                 <tr>
                     <th>Status</th>
-                    <td>{{ ucfirst($subscription->status) }}</td>
+                    <td>
+                        <span class="badge badge-{{ $subscription->status === 'active' ? 'success' : 'secondary' }}">
+                            {{ ucfirst($subscription->status) }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Created At</th>
+                    <td>{{ $subscription->created_at->format('F j, Y - g:i A') }}</td>
+                </tr>
+                <tr>
+                    <th>Last Updated</th>
+                    <td>{{ $subscription->updated_at->format('F j, Y - g:i A') }}</td>
                 </tr>
             </table>
         </div>
     </div>
 
     <div class="mt-3">
-        <a href="{{ route('subscriptions.index') }}" class="btn btn-secondary">Back to List</a>
+        <a href="{{ route('subscriptions.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
     </div>
 </div>
 

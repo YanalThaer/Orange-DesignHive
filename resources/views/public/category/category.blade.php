@@ -13,11 +13,9 @@
       @php
       $name = $category->name;
       $image = $category->image;
-      if (empty($image) ) {
-      $image = asset('assets/img/blog/blog-hero-2.webp');
-      } else {
-      $image = $category->image;
-      }
+      $imagePath = $image
+      ? (Str::startsWith($image, ['http://', 'https://']) ? $image : asset($image))
+      : asset('assets/img/blog/blog-hero-2.webp');
       if (empty($name) ) {
       $name = 'No Category Name';
       } else {
@@ -27,7 +25,7 @@
       <div class="col-lg-4 col-md-6 col-12">
         <article class="blog-item" data-aos="fade-up" data-aos-delay="100">
           <a href="{{ route('category.posts', $category->id) }}">
-            <img src="{{ $image }}" alt="{{ $name }}" class="img-fluid">
+            <img src="{{ $imagePath }}" alt="{{ $name }}" class="img-fluid">
           </a>
           <div class="blog-content">
             <h3 class="post-title">

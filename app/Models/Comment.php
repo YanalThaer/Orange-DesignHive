@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Comment extends Model
 {
@@ -27,5 +28,14 @@ class Comment extends Model
     public function projects()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope('excludeSoftDeletedUsers', function (Builder $builder) {
+            $builder->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at');
+            });
+        });
     }
 }

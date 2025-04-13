@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable , SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -73,9 +73,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Payment::class);
     }
-    public function subscriptions()
+
+    public function subscription()
     {
-        return $this->hasMany(Subscription::class);
+        return $this->hasOne(Subscription::class);
     }
 
     public function messagesSent()
@@ -92,10 +93,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProjectTags::class);
     }
-
-    // public function uploads()
-    // {
-    //     return $this->hasMany(UserUploads::class);
-    // }
-
 }

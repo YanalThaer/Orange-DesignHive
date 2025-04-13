@@ -10,9 +10,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Message;
 use App\Models\Like;
-use Illuminate\Support\Facades\Mail; // Add this if you intend to use Laravel's Mail facade
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Models\ProjectImage;
 
 use Illuminate\Routing\Controller;
 
@@ -39,45 +40,59 @@ class HomeController extends Controller
   }
 
   public function index()
-  {
+{
     $categories = Category::all();
-
-    $projects = Project::with(['user.profile', 'category'])
-      ->withCount('likes')
-      ->withCount('comments')
-      ->with('userLike')
-      ->get();
-
+  
+    $projects = Project::with(['user.profile', 'category', 'images'])
+        ->withCount('likes')
+        ->withCount('comments')
+        ->with('userLike')
+        ->get();
+  
     $unreadUsers = Message::where('receiver_id', Auth::id())
-      ->where('is_read', false)
-      ->groupBy('sender_id')
-      ->get(['sender_id']);
-
+        ->where('is_read', false)
+        ->groupBy('sender_id')
+        ->get(['sender_id']);
+  
     $unreadUsersCount = $unreadUsers->count();
     $unreadUsersDetails = User::whereIn('id', $unreadUsers->pluck('sender_id'))->get();
+      
+    $likesOnMyProjects = null;
+    $likesCount = 0;
+    $subscriptionType = null;
+    $userSubscriptionMessage = '';  
 
     if (Auth::check()) {
-      $user = Auth::user();
-      $likesOnMyProjects = Like::with(['user', 'project'])
-        ->whereIn('project_id', $user->projects->pluck('id'))
-        ->get();
-
-      $likesCount = $likesOnMyProjects->count();
+        $user = User::with('subscription.plan')->find(Auth::id());
+        $subscription = $user->subscription;
+        $subscriptionType = $subscription?->plan?->name ?? null;
+        
+        if ($subscriptionType === 'Normal') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to access chat. Please subscribe to Pro Designer.';
+        } elseif ($subscriptionType === 'Basic') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to post featured projects. Please subscribe to Pro Designer.';
+        }
+  
+        $likesOnMyProjects = Like::with(['user', 'project'])
+            ->whereIn('project_id', $user->projects->pluck('id'))
+            ->get();
+  
+        $likesCount = $likesOnMyProjects->count();
     } else {
-      $likesOnMyProjects = null;
-      $likesCount = 0;
+        $userSubscriptionMessage = 'You need to log in to access all features.';
     }
-
+  
     return view('welcome', compact(
-      'categories',
-      'projects',
-      'unreadUsersCount',
-      'unreadUsersDetails',
-      'likesOnMyProjects',
-      'likesCount'
+        'categories',
+        'projects',
+        'unreadUsersCount',
+        'unreadUsersDetails',
+        'likesOnMyProjects',
+        'likesCount',
+        'userSubscriptionMessage',
+        'subscriptionType'
     ));
-  }
-
+}
 
   public function showProject($id)
   {
@@ -156,18 +171,18 @@ class HomeController extends Controller
     $categories = Category::all();
     $tags = Tag::all();
 
-    // إذا كان id يساوي 0، إرجاع كل المشاريع
     if ($id == 0) {
       $projects = Project::withCount('likes')
         ->withCount('comments')
         ->with('userLike')
+        ->orderBy('created_at', 'desc')
         ->paginate(10);
     } else {
-      // إذا كان id مختلف عن 0، إرجاع المشاريع الخاصة بالفئة المعينة
       $projects = Project::where('category_id', $id)
         ->withCount('likes')
         ->withCount('comments')
         ->with('userLike')
+        ->orderBy('created_at', 'desc')
         ->paginate(10);
     }
 
@@ -184,7 +199,8 @@ class HomeController extends Controller
     foreach ($categories as $category) {
       $category->projects_count = Project::where('category_id', $category->id)->count();
     }
-
+    $subscriptionType = null;
+    $userSubscriptionMessage = '';  
     if (Auth::check()) {
       $user = Auth::user();
       $likesOnMyProjects = Like::with(['user', 'project'])
@@ -192,6 +208,14 @@ class HomeController extends Controller
         ->get();
 
       $likesCount = $likesOnMyProjects->count();
+      $subscription = $user->subscription;
+        $subscriptionType = $subscription?->plan?->name ?? null;
+        
+        if ($subscriptionType === 'Normal') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to access chat. Please subscribe to Pro Designer.';
+        } elseif ($subscriptionType === 'Basic') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to post featured projects. Please subscribe to Pro Designer.';
+        }
     } else {
       $likesOnMyProjects = null;
       $likesCount = 0;
@@ -205,7 +229,9 @@ class HomeController extends Controller
       'unreadUsersDetails',
       'totalProjects',
       'likesOnMyProjects',
-      'likesCount'
+      'likesCount',
+      'subscriptionType',
+      'userSubscriptionMessage'
     ))->with('currentCategoryId', $id);
   }
 
@@ -235,7 +261,8 @@ class HomeController extends Controller
     foreach ($categories as $category) {
       $category->projects_count = Project::where('category_id', $category->id)->count();
     }
-
+    $subscriptionType = null;
+    $userSubscriptionMessage = ''; 
     if (Auth::check()) {
       $user = Auth::user();
       $likesOnMyProjects = Like::with(['user', 'project'])
@@ -243,6 +270,14 @@ class HomeController extends Controller
         ->get();
 
       $likesCount = $likesOnMyProjects->count();
+      $subscription = $user->subscription;
+        $subscriptionType = $subscription?->plan?->name ?? null;
+        
+        if ($subscriptionType === 'Normal') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to access chat. Please subscribe to Pro Designer.';
+        } elseif ($subscriptionType === 'Basic') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to post featured projects. Please subscribe to Pro Designer.';
+        }
     } else {
       $likesOnMyProjects = null;
       $likesCount = 0;
@@ -256,7 +291,9 @@ class HomeController extends Controller
       'unreadUsersDetails',
       'totalProjects',
       'likesOnMyProjects',
-      'likesCount'
+      'likesCount',
+      'subscriptionType',
+      'userSubscriptionMessage'
     ))->with('currentTagId', $tagId);
   }
 
@@ -266,6 +303,7 @@ class HomeController extends Controller
       ->withCount('likes')
       ->withCount('comments')
       ->findOrFail($id);
+
     $categories = Category::all();
 
     $unreadUsers = Message::where('receiver_id', Auth::id())
@@ -277,6 +315,8 @@ class HomeController extends Controller
 
     $unreadUsersDetails = User::whereIn('id', $unreadUsers->pluck('sender_id'))->get();
 
+    $subscriptionType = null;
+    $userSubscriptionMessage = '';  
     if (Auth::check()) {
       $myuser = Auth::user();
       $likesOnMyProjects = Like::with(['user', 'project'])
@@ -284,12 +324,26 @@ class HomeController extends Controller
         ->get();
 
       $likesCount = $likesOnMyProjects->count();
+      $subscription = $user->subscription;
+      $subscriptionType = $subscription?->plan?->name ?? null;
+        
+        if ($subscriptionType === 'Normal') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to access chat. Please subscribe to Pro Designer.';
+        } elseif ($subscriptionType === 'Basic') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to post featured projects. Please subscribe to Pro Designer.';
+        }
     } else {
       $likesOnMyProjects = null;
       $likesCount = 0;
     }
-    return view('public.pages.profile', compact('user', 'categories', 'unreadUsersCount', 'unreadUsersDetails', 'likesOnMyProjects', 'likesCount'));
+
+    foreach ($user->projects as $project) {
+      $project->image = !empty($project->image) ? asset($project->image) : asset('assets/img/blog/blog-hero-2.webp');
+    }
+
+    return view('public.pages.profile', compact('user', 'categories', 'unreadUsersCount', 'unreadUsersDetails', 'likesOnMyProjects', 'likesCount' , 'subscriptionType', 'userSubscriptionMessage'));
   }
+
 
   public function category()
   {
@@ -419,11 +473,14 @@ class HomeController extends Controller
         ->get();
 
       $likesCount = $likesOnMyProjects->count();
+      $subscription = $user->subscription;
+      $subscriptionType = $subscription?->plan?->name ?? null;
+      // dd($subscriptionType);
     } else {
       $likesOnMyProjects = null;
       $likesCount = 0;
     }
-    return view('public.category.addproject', compact('categories', 'unreadUsersCount', 'unreadUsersDetails', 'likesOnMyProjects', 'likesCount', 'tags'));
+    return view('public.category.addproject', compact('categories', 'unreadUsersCount', 'unreadUsersDetails', 'likesOnMyProjects', 'likesCount', 'tags' , 'subscriptionType'));
   }
 
   public function storeProject(Request $request)
@@ -431,34 +488,44 @@ class HomeController extends Controller
     $request->validate([
       'title' => 'required|string|max:255',
       'description' => 'nullable|string',
-      'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+      'images' => 'nullable|array',
+      'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
       'category_id' => 'required|exists:categories,id',
       'tags' => 'nullable|array',
       'tags.*' => 'exists:tags,id',
     ]);
 
-    if ($request->hasFile('image')) {
-      $image = $request->file('image');
-      $folder = 'projects';
-      $imageName = $image->getClientOriginalName();
-      $imagePath = "images/$folder/$imageName";
+    $imagePaths = [];
 
-      if (!file_exists(public_path($imagePath))) {
-        $image->move(public_path("images/$folder"), $imageName);
+    if ($request->hasFile('images')) {
+      foreach ($request->file('images') as $image) {
+        $folder = 'projects';
+        $imageName = time() . '_' . $image->getClientOriginalName();
+        $imagePath = "images/$folder/$imageName";
+
+        if (!file_exists(public_path($imagePath))) {
+          $image->move(public_path("images/$folder"), $imageName);
+        }
+
+        $imagePaths[] = $imagePath;
       }
-    } else {
-      $imagePath = null;
     }
 
     $project = Project::create([
       'title' => $request->title,
       'description' => $request->description,
-      'image' => $imagePath,
       'user_id' => Auth::id(),
       'category_id' => $request->category_id,
+      'featured_post' => $request->input('featured_post') == 1 ? true : false,
     ]);
 
-    // إضافة التاجز في جدول project_tags
+    foreach ($imagePaths as $path) {
+      ProjectImage::create([
+        'project_id' => $project->id,
+        'image' => $path,
+      ]);
+    }
+
     if ($request->filled('tags')) {
       foreach ($request->tags as $tagId) {
         DB::table('project_tags')->insert([
@@ -473,6 +540,7 @@ class HomeController extends Controller
 
     return redirect()->route('category.posts', $project->category_id)->with('success', 'Project added successfully.');
   }
+
 
 
   public function indexChat($receiver_id)
@@ -515,7 +583,7 @@ class HomeController extends Controller
       )
       ->unique()
       ->reject(function ($id) {
-        return $id == Auth::id(); // استثني نفسك
+        return $id == Auth::id();
       });
 
     $chatUsers = User::with('profile')->whereIn('id', $chatUserIds)->get();
@@ -531,8 +599,6 @@ class HomeController extends Controller
       $likesOnMyProjects = null;
       $likesCount = 0;
     }
-
-    // dd($receiver);
 
     return view('public.pages.chat', compact('messages', 'receiver', 'categories', 'unreadUsersCount', 'unreadUsersDetails', 'chatUsers', 'likesOnMyProjects', 'likesCount'));
   }
@@ -629,42 +695,37 @@ class HomeController extends Controller
   }
   public function updateProject(Request $request, $id)
   {
-    // dd($request->all());
     $request->validate([
       'title' => 'required|string|max:255',
       'description' => 'nullable|string',
-      'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
       'category_id' => 'required|exists:categories,id',
+      'images' => 'nullable|array',
+      'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
     ]);
 
     $project = Project::findOrFail($id);
 
-    // رفع الصورة إذا كانت مرفوعة
-    if ($request->hasFile('image')) {
-      $image = $request->file('image');
-      $folder = 'projects';
-      $imageName = time() . '_' . $image->getClientOriginalName(); // اسم الصورة الفريد
-      $image->move(public_path("images/$folder"), $imageName); // تخزينها في `public/images/projects`
-      $imagePath = "images/$folder/$imageName";
-
-      // تحقق إذا الملف غير موجود قبل النقل
-      if (!file_exists(public_path($imagePath))) {
-        $image->move(public_path("images/$folder"), $imageName); // نقل الملف
-      }
-    } else {
-      $imagePath = null;
-    }
-
-    // dd($imagePath);
     $project->update([
       'title' => $request->title,
       'description' => $request->description,
-      'image' => $imagePath ? $imagePath : $project->image,
       'category_id' => $request->category_id,
     ]);
-
+    $project->images()->delete();
+    if ($request->hasFile('images')) {
+      foreach ($request->file('images') as $image) {
+        $folder = 'projects';
+        $imageName = time() . '_' . $image->getClientOriginalName();
+        $image->move(public_path("images/$folder"), $imageName);
+        $imagePath = "images/$folder/$imageName";
+        $project->images()->create([
+          'project_id' => $project->id,
+          'image' => $imagePath,
+        ]);
+      }
+    }
     return redirect()->route('profile', $project->user_id)->with('success', 'Project updated successfully.');
   }
+
   public function destroyProject($id)
   {
     $project = Project::findOrFail($id);

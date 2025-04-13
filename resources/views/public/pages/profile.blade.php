@@ -4,47 +4,15 @@
 <main class="main">
   @php
   $username = $user->name;
-  $facebook = $user->profile->facebook;
-  $twitter = $user->profile->twitter;
-  $instagram = $user->profile->instagram;
-  $linkedin = $user->profile->linkedin;
-  $bio = $user->profile->bio;
+  $facebook = $user->profile->facebook ?? '#';
+  $twitter = $user->profile->twitter ?? '#';
+  $instagram = $user->profile->instagram ?? '#';
+  $linkedin = $user->profile->linkedin ?? '#';
+  $bio = $user->profile->bio ?? 'No Bio';
   $profileimage = $user->profile->profile_picture;
-  if (empty($profileimage)) {
-  $profileimage = asset('assets/img/person/person-f-7.webp');
-  } else {
-  $profileimage = Str::startsWith($profileimage, ['http://', 'https://']) ? $profileimage : asset($profileimage);
-  }
-  if (empty($bio)) {
-  $bio = 'No Bio';
-  } else {
-  $bio = $user->profile->bio;
-  }
-  if (empty($facebook)) {
-  $facebook = '#';
-  } else {
-  $facebook = $user->profile->facebook;
-  }
-  if (empty($twitter)) {
-  $twitter = '#';
-  } else {
-  $twitter = $user->profile->twitter;
-  }
-  if (empty($instagram)) {
-  $instagram = '#';
-  } else {
-  $instagram = $user->profile->instagram;
-  }
-  if (empty($linkedin)) {
-  $linkedin = '#';
-  } else {
-  $linkedin = $user->profile->linkedin;
-  }
-  if (empty($username)) {
-  $username = 'No User Name';
-  } else {
-  $username = $user->name;
-  }
+  $profileimage = $profileimage
+      ? (Str::startsWith($profileimage, ['http://', 'https://']) ? $profileimage : asset($profileimage))
+      : asset('assets/img/person/person-f-7.webp');
   @endphp
   <section id="author-profile" class="author-profile section">
     <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -56,7 +24,7 @@
                 <img src="{{ $profileimage }}" alt="Author" class="img-fluid rounded">
               </div>
               <div class="author-info">
-                <h2>{{ $username }}</h2>
+                <h2>{{ $username ?? 'No User Name' }}</h2>
                 <div class="author-stats d-flex justify-content-between text-center my-4">
                   <div class="stat-item">
                     <h4 data-purecounter-start="0" data-purecounter-end="{{ $user->projects_count ?? 0 }}" data-purecounter-duration="1" class="purecounter"></h4>
@@ -84,6 +52,12 @@
             <div class="author-content" data-aos="fade-up" data-aos-delay="200">
               <div class="content-header d-flex justify-content-between">
                 @auth
+                @php
+                $message = $subscriptionType;
+                if ($subscriptionType === 'Normal' || $subscriptionType === 'Basic') {
+                    $message = 'You need to upgrade your subscription to access this feature.';
+                }
+                @endphp
                 @if (Auth::user()->id == $user->id)
                 <h3>About Me</h3>
                 <a href="{{ route('usersprofile.edit', $user->id) }}" class="btn btn-dark mb-3">
@@ -91,21 +65,19 @@
                 </a>
                 @else
                 <h3>{{ $username }}'s Profile</h3>
-                <a href="{{ route('chat.index', $user->id) }}" class="btn btn-dark mb-3">
+                <button type="button" class="btn btn-dark mb-3" id="getInTouchButton" data-subscription-message="{{ $message }}">
                   <i class="bi bi-pencil"></i> Get in Touch
-                </a>
+                </button>
                 @endif
                 @else
                 <h3>{{ $username }}'s Profile</h3>
-                <button type="button" class="btn btn-dark mb-3" id="getInTouchButton">
+                <button type="button" class="btn btn-dark mb-3" id="getInTouchButton" data-login-required="true">
                   <i class="bi bi-pencil"></i> Get in Touch
                 </button>
                 @endauth
               </div>
               <div class="content-body">
-                <p>
-                  {{ $bio }}
-                </p>
+                <p>{{ $bio }}</p>
                 <div class="featured-articles mt-5">
                   <h4>Projects</h4>
                   <div class="row g-4">
@@ -116,31 +88,13 @@
                     @else
                     @foreach($user->projects as $project)
                     @php
-                    if (empty($project->image)) {
-                    $categoryImage = asset('assets/img/blog/blog-hero-2.webp');
-                    } elseif (Str::startsWith($project->image, ['http://', 'https://'])) {
-                    $categoryImage = $project->image;
-                    } else {
-                    $categoryImage = asset($project->image);
-                    }
-
-                    if (empty($project->category->name)) {
-                    $categoryName = 'No Category Name';
-                    } else {
-                    $categoryName = $project->category->name;
-                    }
-
-                    if (empty($project->title)) {
-                    $projectTitle = 'No Title';
-                    } else {
-                    $projectTitle = $project->title;
-                    }
-
-                    if (empty($project->created_at->diffForHumans())) {
-                    $projectCreatedAt = 'No Date';
-                    } else {
-                    $projectCreatedAt = $project->created_at->diffForHumans();
-                    }
+                    $image = $project->images->first()?->image;
+                    $categoryImage = $image
+                      ? (Str::startsWith($image, ['http://', 'https://']) ? $image : asset($image))
+                      : asset('assets/img/blog/blog-hero-2.webp');
+                    $categoryName = $project->category->name ?? 'No Category Name';
+                    $projectTitle = $project->title ?? 'No Title';
+                    $projectCreatedAt = $project->created_at->diffForHumans() ?? 'No Date';
                     @endphp
                     <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
                       <article class="article-card">
@@ -151,7 +105,7 @@
                           <div class="post-category">{{ $categoryName }}</div>
                           <h5><a href="{{ route('project.details', $project->id) }}">{{ $projectTitle }}</a></h5>
                           <div class="post-meta">
-                            <span><i class="bi bi-clock"></i> {{ $projectCreatedAt }} </span>
+                            <span><i class="bi bi-clock"></i> {{ $projectCreatedAt }}</span>
                           </div>
                         </div>
                         @auth
@@ -184,63 +138,76 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-        Are you sure you want to delete this project? This action cannot be undone.
-      </div>
+      <div class="modal-body">Are you sure you want to delete this project? This action cannot be undone.</div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form id="deleteForm" method="POST" style="display: inline;">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="deleteForm" method="POST">
           @csrf
           @method('DELETE')
-          <button type="submit" class="btn btn-danger">Delete</button>
+          <button class="btn btn-danger" type="submit">Delete</button>
         </form>
       </div>
     </div>
   </div>
 </div>
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+<div class="modal fade" id="loginModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title">Login Required</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <p>You need to log in to get in touch with this user.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="subscriptionModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Upgrade Required</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>You need to upgrade your subscription to access this feature.</p>
+      </div>
+      <div class="modal-footer">
+        <a href="{{ route('subecribtion') }}" class="btn btn-warning">View Plans</a>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     var deleteModal = document.getElementById('deleteModal');
-    deleteModal.addEventListener('show.bs.modal', function(event) {
+    deleteModal.addEventListener('show.bs.modal', function (event) {
       var button = event.relatedTarget;
       var projectId = button.getAttribute('data-project-id');
       var form = document.getElementById('deleteForm');
       form.action = '/projects/' + projectId;
     });
-  });
-</script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
     var getInTouchButton = document.getElementById('getInTouchButton');
-
     if (getInTouchButton) {
-      getInTouchButton.addEventListener('click', function() {
-        // فتح الـ Modal عند الضغط على الزر
-        var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-        loginModal.show();
+      getInTouchButton.addEventListener('click', function () {
+        if (this.dataset.loginRequired) {
+          new bootstrap.Modal(document.getElementById('loginModal')).show();
+        } else if (this.dataset.subscriptionMessage) {
+          new bootstrap.Modal(document.getElementById('subscriptionModal')).show();
+        } else {
+          window.location.href = "{{ route('chat.index', $user->id) }}";
+        }
       });
     }
   });
 </script>
-
 @endsection

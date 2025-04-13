@@ -16,18 +16,19 @@ class CheckSuperAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->role == 'superadmin') {
+        $admin = Auth::guard('admin')->user();
+
+        // إذا مو مسجل أصلاً
+        if (!$admin) {
+            return redirect('/'); // أو abort(403)
+        }
+
+        // إذا superadmin، خليه يكمل
+        if ($admin->role === 'superadmin') {
             return $next($request);
         }
 
-
-        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->role == 'admin') {
-            if (in_array($request->route()->getActionMethod(), ['create', 'edit', 'destroy'])) {
-                // return redirect()->route('admins.show', Auth::guard('admin')->user()->id); 
-                abort(403, 'You do not have sufficient permissions to access this page.');
-            }
-        }
-
-        return $next($request);
+        // باقي الحالات، امنع
+        abort(403, 'You do not have sufficient permissions to access this page.');
     }
 }

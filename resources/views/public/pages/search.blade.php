@@ -9,7 +9,6 @@
             <p>Sorry, we couldn't find any projects or categories matching your search.</p>
         </div>
         @else
-
         @if(!$projects->isEmpty())
         <section id="latest-posts" class="latest-posts section" style="padding-top: 0px;">
             <div class="container section-title" data-aos="fade-up">
@@ -24,7 +23,6 @@
                     @endforeach
                 </div>
                 @endif
-
                 @if(!$categoriesSearch->isEmpty())
                 <section id="category-section" class="blog-hero section">
                     <div class="container section-title" data-aos="fade-up">

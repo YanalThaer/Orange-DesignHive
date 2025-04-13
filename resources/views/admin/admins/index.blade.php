@@ -12,12 +12,13 @@
         </div>
     @endif
     
-    {{-- Create New Admin Button --}}
-    @if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->role == 'superadmin')
-    <div class="mb-3">
-        <a href="{{ route('admins.create') }}" class="btn btn-primary">Create New Admin</a>
-    </div>
-    @endif
+{{-- Create New Admin & Deleted Admins Button --}}
+@if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->role == 'superadmin')
+<div class="mb-3 d-flex">
+    <a href="{{ route('admins.create') }}" class="btn btn-primary mr-2">Create New Admin</a>
+    <a href="{{ route('admins.deleted') }}" class="btn btn-secondary">Deleted Admins</a>
+</div>
+@endif
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -28,7 +29,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>#</th> <!-- Changed column name to a counter -->
                             <th>Name</th>
                             <th>Email</th>
                             <th>Role</th>
@@ -38,26 +39,28 @@
                     <tbody>
                         @foreach($admins as $admin)
                         <tr>
-                            <td>{{ $admin->id }}</td>
+                            <td>{{ $loop->iteration }}</td> <!-- Use $loop->iteration for the counter -->
                             <td>{{ $admin->name }}</td>
                             <td>{{ $admin->email }}</td>
                             <td>{{ $admin->role }}</td>
-                            <td>
-                                <a href="{{ route('admins.show', $admin->id) }}" class="btn btn-sm btn-info">Show</a>
-                                {{-- <a href="{{ route('admins.edit', $admin->id) }}" class="btn btn-sm btn-primary">Edit</a>
-                                <form action="{{ route('admins.destroy', $admin->id) }}" method="POST" style="display:inline-block;">
+                            <td class="d-flex justify-content-center"> <!-- Align buttons in one line -->
+                                <a href="{{ route('admins.show', $admin->id) }}" class="btn btn-sm btn-info mx-1">
+                                    <i class="fas fa-eye"></i> <!-- Eye icon -->
+                                </a>
+                                @if((Auth::guard('admin')->check() && Auth::guard('admin')->user()->role == 'superadmin') || (Auth::guard('admin')->check() && $admin == $currentAdmin))
+                                <a href="{{ route('admins.edit', $admin->id) }}" class="btn btn-sm btn-warning mx-1">
+                                    <i class="fas fa-pencil-alt"></i> <!-- Pencil icon -->
+                                </a>
+                                @endif
+                                @if((Auth::guard('admin')->check() && Auth::guard('admin')->user()->role == 'superadmin'))
+                                <form id="delete-form-{{ $admin->id }}" action="{{ route('admins.destroy', $admin->id) }}" method="POST" style="display:none;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this admin?')">Delete</button>
-                                </form> --}}
-                                @if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->role == 'superadmin')
-                                <a href="{{ route('admins.edit', $admin->id) }}" class="btn btn-sm btn-primary">Edit</a>
-                                <form action="{{ route('admins.destroy', $admin->id) }}" method="POST" style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this admin?')">Delete</button>
                                 </form>
-                            @endif
+                                <button type="button" class="btn btn-sm btn-danger mx-1" onclick="confirmDelete({{ $admin->id }})">
+                                    <i class="fas fa-trash"></i> <!-- Trash can icon -->
+                                </button>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

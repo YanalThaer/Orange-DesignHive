@@ -13,6 +13,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TagController;
 
 
 Auth::routes();
@@ -76,11 +77,31 @@ Route::get('/auth/google/callback', [RegisterController::class, 'handleGoogleCal
 // admin
 Route::prefix('admin')->middleware('isAdmin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::resource('admins', AdminController::class)->middleware('superadmin');
+    Route::get('/admins/deleted', [AdminController::class, 'deleted'])->name('admins.deleted'); 
+    Route::get('/admins/deleted/{admin}', [AdminController::class, 'showDeleted'])->name('admins.showdeleted');
+    Route::post('/admins/{admin}/restore', [AdminController::class, 'restore'])->name('admins.restore'); 
+    Route::get('/users/deleted', [UserController::class, 'deleted'])->name('users.deleted'); 
+    Route::post('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::get('/users/deleted/{user}', [UserController::class, 'showDeleted'])->name('users.showdeleted');
+    Route::get('/projects/deleted', [ProjectController::class, 'deleted'])->name('projects.deleted'); 
+    Route::post('/projects/{project}/restore', [ProjectController::class, 'restore'])->name('projects.restore'); 
+    Route::get('/projects/deleted/{project}', [ProjectController::class, 'showDeleted'])->name('projects.showdeleted'); 
+    Route::get('/comments/deleted', [CommentController::class, 'deleted'])->name('comments.deleted');
+    Route::post('/comments/{comment}/restore', [CommentController::class, 'restore'])->name('comments.restore');
+    Route::get('/comments/deleted/{comment}', [CommentController::class, 'showDeleted'])->name('comments.showdeleted');
+    Route::get('/categories/deleted', [CategoryController::class, 'deleted'])->name('categories.deleted');
+    Route::post('/categories/{category}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
+    Route::get('/categories/deleted/{category}', [CategoryController::class, 'showDeleted'])->name('categories.showdeleted'); 
+    Route::get('/tags/deleted', [TagController::class, 'deleted'])->name('tags.deleted'); 
+    Route::post('/tags/{tags}/restore', [TagController::class, 'restore'])->name('tags.restore'); 
+    Route::get('/tags/deleted/{tags}', [TagController::class, 'showDeleted'])->name('tags.showdeleted'); 
+    Route::get('/subscription-plans', [SubscriptionController::class, 'indexPlans'])->name('subscription-plans.index');
+    Route::resource('admins', AdminController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('comments', CommentController::class);
     Route::resource('payments', PaymentController::class);
     Route::resource('projects', ProjectController::class);
-    // Route::resource('subscriptions', SubscriptionController::class);
+    Route::resource('tags', TagController::class);
+    Route::resource('subscriptions', SubscriptionController::class);
     Route::resource('users', UserController::class);
 });

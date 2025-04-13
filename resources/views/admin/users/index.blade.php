@@ -12,6 +12,10 @@
         </div>
     @endif
 
+    <div class="mb-3 d-flex">
+        <a href="{{ route('users.deleted') }}" class="btn btn-secondary">Deleted Users</a>
+    </div>
+
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Users List</h6>
@@ -21,7 +25,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>#</th> <!-- Changed column name to a counter -->
                             <th>Name</th>
                             <th>Email</th>
                             <th>Actions</th>
@@ -30,16 +34,20 @@
                     <tbody>
                         @foreach($users as $user)
                         <tr>
-                            <td>{{ $user->id }}</td>
+                            <td>{{ $loop->iteration }}</td> <!-- Use $loop->iteration for the counter -->
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
-                            <td>
-                                <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-info">Show</a>
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline-block;">
+                            <td class="d-flex justify-content-center"> <!-- Align buttons in one line -->
+                                <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-info mx-1">
+                                    <i class="fas fa-eye"></i> <!-- Eye icon -->
+                                </a>
+                                <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:none;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
                                 </form>
+                                <button type="button" class="btn btn-sm btn-danger mx-1" onclick="confirmDelete({{ $user->id }})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                         @endforeach

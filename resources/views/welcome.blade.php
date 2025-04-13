@@ -9,11 +9,9 @@
         @php
         $name = $category->name;
         $image = $category->image;
-        if (empty($image) ) {
-        $image = asset('assets/img/blog/blog-hero-2.webp');
-        } else {
-        $image = $category->image;
-        }
+        $imagePath = $image
+        ? (Str::startsWith($image, ['http://', 'https://']) ? $image : asset($image))
+        : asset('assets/img/blog/blog-hero-2.webp');
         if (empty($name) ) {
         $name = 'No Category Name';
         } else {
@@ -23,7 +21,7 @@
         <article class="blog-item {{ $loop->first ? 'featured' : '' }}" data-aos="fade-up"
           data-aos-delay="{{ 100 + ($index * 100) }}">
           <a href="{{ route('category.posts', $category->id) }}">
-            <img src="{{ $image }}" alt="{{ $name }}" class="img-fluid">
+            <img src="{{ $imagePath }}" alt="{{ $name }}" class="img-fluid">
             <div class="blog-content">
               <h{{ $loop->first ? '2' : '3' }} class="post-title">
                 <a href="{{ route('category.posts', $category->id) }}" title="{{ $name }}">{{ $name }}</a>
@@ -68,10 +66,13 @@
           }
         </script>
         <div class="swiper-wrapper">
-          @foreach ($projects->take(4) as $project)
+          @foreach ($projects->where('featured_post', 1)->sortByDesc('created_at') as $project)
           @php
           $title = $project->title;
-          $image = $project->image;
+          $image = $project->images->first()?->image;
+          $imagePath = $image
+          ? (Str::startsWith($image, ['http://', 'https://']) ? $image : asset($image))
+          : asset('assets/img/blog/blog-hero-2.webp');
           $description = $project->description;
           $username = $project->user->name;
           $comments_count = $project->comments_count;
@@ -96,11 +97,6 @@
           } else {
           $description = $project->description;
           }
-          if (empty($image) ) {
-          $image = asset('assets/img/blog/blog-hero-2.webp');
-          } else {
-          $image = $project->image;
-          }
           if (empty($title) ) {
           $title = 'No Project Name';
           } else {
@@ -124,7 +120,7 @@
                 </h2> -->
                 <!-- <p>{{ Str::limit(strip_tags($description), 120) }}</p> -->
                 <a href="{{ route('project.details', $project->id) }}" class="read-more">
-                Show project <i class="bi bi-arrow-right"></i>
+                  Show project <i class="bi bi-arrow-right"></i>
                 </a>
               </div>
             </div>
@@ -136,36 +132,34 @@
     </div>
   </section>
   <section id="latest-posts" class="latest-posts section" style="padding-top: 0px;">
-  <div class="container section-title" data-aos="fade-up">
-    <h2>Posts</h2>
-    <div><span>Check Our</span> <span class="description-title"> Posts</span></div>
-  </div>
-  <div class="container" data-aos="fade-up" data-aos-delay="100">
-    <div class="row gy-4" id="projects-container">
-      @if ($projects->isEmpty())
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Posts</h2>
+      <div><span>Check Our</span> <span class="description-title"> Posts</span></div>
+    </div>
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row gy-4" id="projects-container">
+        @if ($projects->isEmpty())
         <div class="col-12 text-center">
           <h4>No projects available.</h4>
         </div>
-      @else
-        @foreach($projects->take(15) as $project)
-          <div class="col-lg-4 project-item">
-            @include('layouts.public.__projects', ['project' => $project])
-          </div>
-
-       
+        @else
+        @foreach($projects->shuffle()->take(15) as $project)
+        <div class="col-lg-4 project-item">
+          @include('layouts.public.__projects', ['project' => $project])
+        </div>
         @endforeach
-      @endif
+        @endif
+      </div>
+      <div id="no-projects-message" class="text-center mt-4" style="display: none;">
+        <h4>No project in this category</h4>
+      </div>
     </div>
-    <div id="no-projects-message" class="text-center mt-4" style="display: none;">
-      <h4>No project in this category</h4>
+    <div class="text-center mt-4">
+      <button class="btn btn-dark px-5 py-2 rounded-1 fw-bold shadow-sm">
+        <a href="{{ route('category.posts' , 0) }}" class="text-white ">View All</a>
+      </button>
     </div>
-  </div>
-  <div class="text-center mt-4">
-    <button class="btn btn-dark px-5 py-2 rounded-1 fw-bold shadow-sm">
-      <a href="{{ route('category.posts' , 0) }}" class="text-white ">View All</a>
-    </button>
-  </div>
-</section>
+  </section>
 
   <section id="category-section" class="blog-hero section">
     <div class="container section-title" data-aos="fade-up">
@@ -250,11 +244,12 @@
       });
     </script>
   </section>
-  
+
   <style>
     .modal-backdrop {
-        background-color: #000 !important;
-        opacity: 0.5 !important;/* Ensure it's visible */
+      background-color: #000 !important;
+      opacity: 0.5 !important;
+      /* Ensure it's visible */
     }
   </style>
 </main>

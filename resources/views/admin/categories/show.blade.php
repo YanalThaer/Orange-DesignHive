@@ -20,14 +20,16 @@
                     <td>{{ $category->name }}</td>
                 </tr>
                 <tr>
-                    <th>Description</th>
-                    <td>{{ $category->description }}</td>
-                </tr>
-                <tr>
                     <th>Image</th>
                     <td>
-                        @if($category->image)
-                            <img src="{{ $category->image }}" alt="{{ $category->name }}" style="width: 200px; height: auto;">
+                        @php
+                        $image = $category->image;
+                        $imagePath = $image
+                        ? (Str::startsWith($image, ['http://', 'https://']) ? $image : asset($image))
+                        : asset('assets/img/blog/blog-hero-2.webp');
+                        @endphp
+                        @if($imagePath)
+                            <img src="{{ $imagePath }}" alt="{{ $category->name }}" style="width: 200px; height: auto;">
                         @else
                             No Image
                         @endif
@@ -51,12 +53,12 @@
 
     {{-- Actions --}}
     <div class="mt-3">
-        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-primary">Edit</a>
-        <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline-block;">
+        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-warning">Edit</a>
+        <form id="delete-form-{{ $category->id }}" action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline-block;">
             @csrf
             @method('DELETE')
-            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
         </form>
+        <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $category->id }})">Delete</button>
         <a href="{{ route('categories.index') }}" class="btn btn-secondary">Back to List</a>
     </div>
 </div>

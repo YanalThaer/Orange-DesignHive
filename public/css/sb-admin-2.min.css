@@ -10,7 +10,7 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-:root {
+ :root {
   --blue: #4e73df;
   --indigo: #6610f2;
   --purple: #6f42c1;
@@ -24,7 +24,7 @@
   --white: #fff;
   --gray: #858796;
   --gray-dark: #5a5c69;
-  --primary: #D8B6A4;
+  --primary: #420363;
   --secondary: #858796;
   --success: #1cc88a;
   --info: #36b9cc;
@@ -4531,7 +4531,7 @@ input[type="button"].btn-block {
 
 .card-title {
   margin-bottom: 0.75rem;
-  color: #D8B6A4;
+  color: #420363;
 }
 
 .card-subtitle {
@@ -4797,8 +4797,8 @@ input[type="button"].btn-block {
 .page-item.active .page-link {
   z-index: 3;
   color: #fff;
-  background-color: #D8B6A4;
-  border-color: #D8B6A4;
+  background-color: #420363;
+  border-color: #420363;
 }
 
 .page-item.disabled .page-link {
@@ -9902,7 +9902,7 @@ a:focus {
 }
 
 .bg-gradient-primary {
-  background-color: #D8B6A4;
+  background-color: #420363;
   background-size: cover;
 }
 

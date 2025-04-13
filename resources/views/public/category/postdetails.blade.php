@@ -54,13 +54,36 @@ $imagePath = Str::startsWith($imagePath, ['http://', 'https://']) ? $imagePath :
         <section id="blog-details" class="blog-details section">
           <div class="container" data-aos="fade-up">
             <article class="article">
-              <div class="hero-img" data-aos="zoom-in">
-                <img src="{{ $imagePath }}" alt="Featured blog image" class="img-fluid" loading="lazy">
-                <div class="meta-overlay">
-                  <div class="meta-categories">
-                    <a href="" class="category">{{ $categoryname }}</a>
-                    <span class="divider">•</span>
-                    <span class="reading-time"><i class="bi bi-clock"></i>{{ $date }}</span>
+              <div class="hero-img position-relative" data-aos="zoom-in" style="height: 400px;">
+                @if($project->images->count())
+                <div id="carouselProject{{ $project->id }}" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="3000">
+                  <div class="carousel-inner h-100">
+                    @foreach($project->images as $index => $image)
+                    <div class="carousel-item h-100 {{ $index === 0 ? 'active' : '' }}">
+                      <img
+                        src="{{ Str::startsWith($image->image, ['http', 'https']) ? $image->image : asset($image->image) }}"
+                        class="d-block w-100 h-100 rounded-3"
+                        style="object-fit: cover;"
+                        alt="Project Image {{ $index + 1 }}">
+                    </div>
+                    @endforeach
+                  </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carouselProject{{ $project->id }}" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carouselProject{{ $project->id }}" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+                </div>
+                @else
+                <img src="{{ asset('assets/img/blog/blog-hero-2.webp') }}" class="img-fluid w-100 h-100 rounded-3" style="object-fit: cover;" alt="Default Image">
+                @endif
+                <div class="meta-overlay position-absolute bottom-0 start-0 w-100 px-3 py-2" style="background: rgba(0,0,0,0.4); color: white; border-bottom-left-radius: 0.75rem; border-bottom-right-radius: 0.75rem;">
+                  <div class="meta-categories d-flex align-items-center justify-content-between">
+                    <a href="" class="category text-white fw-bold">{{ $categoryname }}</a>
+                    <span class="reading-time"><i class="bi bi-clock me-1"></i>{{ $date }}</span>
                   </div>
                 </div>
               </div>
@@ -114,6 +137,27 @@ $imagePath = Str::startsWith($imagePath, ['http://', 'https://']) ? $imagePath :
             </article>
           </div>
         </section>
+        <div class="project-gallery mt-4">
+          <h4 class="mb-3 text-secondary">More Images</h4>
+          <div class="row g-3">
+            @php
+            $additionalImages = $project->images->take(5);
+            @endphp
+            @forelse ($additionalImages as $image)
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="image-wrapper rounded overflow-hidden shadow-sm">
+                <img
+                  src="{{ Str::startsWith($image->image, ['http', 'https']) ? $image->image : asset($image->image) }}"
+                  alt="Project Image"
+                  class="img-fluid w-100 h-100"
+                  style="object-fit: cover; aspect-ratio: 4/3;">
+              </div>
+            </div>
+            @empty
+            <p class="text-muted">No additional images found.</p>
+            @endforelse
+          </div>
+        </div>
         <section id="blog-comments" class="blog-comments section">
           <div class="container" data-aos="fade-up" data-aos-delay="100">
             <div class="blog-comments-3">
@@ -185,4 +229,15 @@ $imagePath = Str::startsWith($imagePath, ['http://', 'https://']) ? $imagePath :
     </div>
   </div>
 </main>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const carousels = document.querySelectorAll('.carousel');
+    carousels.forEach(carousel => {
+      new bootstrap.Carousel(carousel, {
+        interval: 3000,
+        ride: 'carousel'
+      });
+    });
+  });
+</script>
 @endsection

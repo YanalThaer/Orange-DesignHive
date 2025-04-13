@@ -138,7 +138,6 @@
         padding-right: 2.5rem;
     }
 </style>
-
 <div class="container pb-4">
     <div class="row justify-content-center mb-4">
         <div class="col-12 text-center">
@@ -149,23 +148,17 @@
         <div class="col-lg-6">
             <div class="payment-box shadow-sm">
                 <h5 class="mb-4 fw-semibold">Payment details</h5>
-
                 <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
-                    <!-- PayPal Button -->
                     <button class="btn-paypal">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="22">
                         <span class="ms-2"></span>
                     </button>
-
-                    <!-- GPay Button -->
                     <button class="btn-gpay">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Google_Pay_Logo.svg" alt="GPay" height="20">
                         <span></span>
                     </button>
                 </div>
-
                 <p class="text-muted mb-3">or pay another way</p>
-
                 <form>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Cardholder Name</label>
@@ -192,7 +185,6 @@
                 </form>
             </div>
         </div>
-
         <div class="col-lg-4">
             <div class="price-box shadow-sm">
                 <div class="mb-3">
@@ -202,26 +194,20 @@
                         <option value="pro" data-price="360" selected>Pro Designer – $30/month</option>
                     </select>
                 </div>
-
                 <h6 class="fw-semibold mb-3" id="planTitle">Dribbble Pro Designer<br><small class="text-muted" id="planYear">$30/month</small></h6>
-
                 <div class="d-flex justify-content-between mb-2">
                     <span>Subtotal</span>
                     <span id="subtotalPrice">$720.00</span>
                 </div>
-
                 <div class="d-flex justify-content-between text-purple fw-semibold mb-3" style="color: #c770ff;">
                     <span>Yearly plan discount</span>
                     <span id="discountPrice">-$360.00</span>
                 </div>
-
                 <div class="d-flex justify-content-between fw-bold border-top pt-2 mb-3">
                     <span>Billed Now</span>
                     <span id="billedNow">USD $360.00</span>
                 </div>
-
                 <button class="subscribe-btn">Subscribe</button>
-
                 <p class="text-muted mt-3 small">
                     All sales are charged in USD and all sales are final. You will be charged the full amount immediately. You will be charged yearly thereafter while the subscription is active. Cancel any time.
                 </p>
@@ -229,8 +215,6 @@
         </div>
     </div>
 </div>
-
-<!-- Modal -->
 <div class="modal fade" id="subscribeModal" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center p-4">
@@ -242,10 +226,7 @@
         </div>
     </div>
 </div>
-
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
     const planSelect = document.getElementById('planSelect');
     const planTitle = document.getElementById('planTitle');
@@ -275,5 +256,4 @@
         subscribeModal.show();
     });
 </script>
-
 @endsection

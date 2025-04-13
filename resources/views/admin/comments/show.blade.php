@@ -23,7 +23,12 @@
                 </tr>
                 <tr>
                     <th>Project ID</th>
-                    <td>{{ $comment->project_id }}</td>
+                    <td>
+                        @php
+                        $projectTitle = $projects->firstWhere('id', $comment->project_id)?->title;
+                        @endphp
+                        {{ $projectTitle ?? 'No Project' }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Content</th>
@@ -43,11 +48,11 @@
 
     {{-- Actions --}}
     <div class="mt-3">
-        <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:inline-block;">
+        <form id="delete-form-{{ $comment->id }}" action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:inline-block;">
             @csrf
             @method('DELETE')
-            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this comment?')">Delete</button>
         </form>
+        <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $comment->id }})">Delete</button>
         <a href="{{ route('comments.index') }}" class="btn btn-secondary">Back to List</a>
     </div>
 </div>

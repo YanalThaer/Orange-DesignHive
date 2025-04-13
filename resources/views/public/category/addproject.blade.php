@@ -28,7 +28,6 @@
                     @endforeach
                 </select>
             </div>
-
             <div class="mb-4">
                 <label class="form-label fw-bold text-secondary">Tags</label>
                 <div class="d-flex flex-wrap gap-2">
@@ -41,44 +40,55 @@
                 </div>
             </div>
             <div class="mb-4">
-                <label for="image" class="form-label fw-bold text-secondary">Upload Image</label>
+                <label for="images" class="form-label fw-bold text-secondary">Upload Images</label>
                 <div class="border-2 border-dashed rounded-3 p-4 text-center position-relative"
                     style="border-color: #cbd5e0; background-color: #f8fafc;">
-                    <input type="file" class="form-control visually-hidden" id="image" name="image"
-                        accept="image/png, image/jpeg" required onchange="previewImage(event)">
-                    <label for="image" class="btn btn-outline-light px-4 rounded-1 cursor-pointer" style="border-color: #420363 !important; color: #420363;">
-                        <i class="bi bi-cloud-upload me-2"></i>Choose File
+                    <input type="file" class="form-control visually-hidden" id="images" name="images[]" accept="image/png, image/jpeg" multiple required onchange="previewImages(event)">
+                    <label for="images" class="btn btn-outline-light px-4 rounded-1 cursor-pointer" style="border-color: #420363 !important; color: #420363;">
+                        <i class="bi bi-cloud-upload me-2"></i>Choose Files
                     </label>
-                    <p class="text-muted mt-2 mb-0">PNG or JPG up to 5MB</p>
-                    <div class="mt-3">
-                        <img id="preview" src="#" alt="Project Image"
-                            class="img-fluid d-none rounded-3 shadow-sm" style="max-height: 200px; object-fit: cover;">
+                    <p class="text-muted mt-2 mb-0">PNG or JPG up to 5MB each</p>
+                    <div id="image-preview-container" class="mt-3">
+                        <!-- سيتم عرض معاينات الصور هنا -->
                     </div>
                 </div>
             </div>
             <div class="text-center mt-4">
-                <button type="submit" class="btn btn-lg px-5 py-2 rounded-1 fw-bold shadow-sm"
+                <button type="submit" name="featured_post" value="0" class="btn btn-lg px-5 py-2 rounded-1 fw-bold shadow-sm"
                     style="background: #420363; color: white; transition: transform 0.2s;">
                     Add Project
                 </button>
+                @if ($subscriptionType == 'Basic' || $subscriptionType == 'pro_designer')
+                <button type="submit" name="featured_post" value="1" class="btn btn-lg px-5 py-2 rounded-1 fw-bold shadow-sm"
+                    style="background: #420363; color: white; transition: transform 0.2s;">
+                    Add Featured Project
+                </button>
+                @endif
             </div>
         </form>
     </div>
 </main>
 <script>
-    function previewImage(event) {
-        const reader = new FileReader();
-        const preview = document.getElementById('preview');
-        const uploadLabel = document.querySelector('label[for="image"]');
+    function previewImages(event) {
+        const previewContainer = document.getElementById('image-preview-container');
+        previewContainer.innerHTML = ''; // إعادة تعيين المعاينات السابقة
 
-        reader.onload = function() {
-            preview.src = reader.result;
-            preview.classList.remove('d-none');
-            uploadLabel.classList.add('d-none');
-        }
+        const files = event.target.files;
+        for (let i = 0; i < files.length; i++) {
+            const reader = new FileReader();
+            const imagePreview = document.createElement('img');
+            imagePreview.classList.add('img-fluid', 'rounded-3', 'shadow-sm');
+            imagePreview.style.maxHeight = '200px';
+            imagePreview.style.objectFit = 'cover';
+            imagePreview.classList.add('d-block', 'mb-3');
 
-        if (event.target.files[0]) {
-            reader.readAsDataURL(event.target.files[0]);
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+            }
+
+            reader.readAsDataURL(files[i]);
+
+            previewContainer.appendChild(imagePreview);
         }
     }
 

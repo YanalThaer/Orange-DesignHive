@@ -8,7 +8,6 @@
       <p>Welcome to our creative space where designers from all over the world come together to showcase their work, collaborate, and inspire each other.</p>
     </div>
   </div>
-
   <section id="about" class="about section ">
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       <span class="section-badge"><i class="bi bi-info-circle"></i> About Us</span>

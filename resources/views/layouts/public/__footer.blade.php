@@ -62,7 +62,6 @@
 
           let data = await response.json();
 
-          // استبدال الأيقونة حسب حالة اللايك
           if (data.liked) {
             likeIcon.className = "bi bi-heart-fill fs-4 text-danger";
           } else {
@@ -93,5 +92,4 @@
     });
 </script>
 </body>
-
 </html>

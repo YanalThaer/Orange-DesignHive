@@ -32,9 +32,9 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
             ProfileSeeder::class,
             SubscriptionSeeder::class,
-            SubscriptionPlansSeeder::class,
+            // SubscriptionPlansSeeder::class,
             UserSeeder::class,
-            // UserUploadsSeeder::class,
+            ProjectImageSeeder::class,
             TagSeeder::class,
             ProjectTagsSeeder::class,
         ]);

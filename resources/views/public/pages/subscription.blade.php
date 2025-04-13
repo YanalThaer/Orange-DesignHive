@@ -61,10 +61,7 @@
         <div class="mb-4">
             <h1 class="pricing-title">Level Up Your Design Game</h1>
         </div>
-
-        <!-- Pricing Plans -->
         <div class="row justify-content-center text-center">
-            <!-- Basic Plan -->
             <div class="col-md-4 mb-4">
                 <div class="price-box">
                     <div>
@@ -78,8 +75,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Pro Plan -->
             <div class="col-md-4 mb-4">
                 <div class="price-box">
                     <h4>Pro Designer</h4>
@@ -92,8 +87,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Button -->
         <div>
             <a href="{{ route('payment') }}" class="btn btn-pink">Get Started</a>
         </div>

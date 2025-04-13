@@ -1,9 +1,7 @@
 @extends('layouts.public')
 @section('title', 'DesignHive | Posts')
 @section('content')
-
 <style>
-    /* تخصيص Pagination */
     .pagination .page-item.active .page-link {
         background-color: #420363;
         border-color: #420363;
@@ -18,7 +16,6 @@
         color: #2a0242;
     }
 </style>
-
 <main class="main">
   <div class="container">
     <div class="row">

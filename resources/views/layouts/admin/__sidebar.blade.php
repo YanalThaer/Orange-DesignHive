@@ -37,17 +37,24 @@
         </a>
     </li>
 
+    <li class="nav-item {{ Request::is('admin/categories') ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="{{ url('/admin/categories') }}">
+            <i class="fa-solid fa-list"></i>
+            <span>Categories</span>
+        </a>
+    </li>
+
+    <li class="nav-item {{ Request::is('admin/tags') ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="{{ url('/admin/tags') }}">
+            <i class="fa-solid fa-list"></i>
+            <span>Tags</span>
+        </a>
+    </li>
+
     <li class="nav-item {{ Request::is('admin/subscriptions') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="{{ url('/admin/subscriptions') }}">
             <i class="fa-solid fa-credit-card"></i>
             <span>Subscriptions</span>
-        </a>
-    </li>
-
-    <li class="nav-item {{ Request::is('admin/payments') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="{{ url('/admin/payments') }}">
-            <i class="fa-solid fa-coins"></i>
-            <span>Payments</span>
         </a>
     </li>
 
@@ -65,12 +72,14 @@
         </a>
     </li>
 
-    <li class="nav-item {{ Request::is('admin/categories') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="{{ url('/admin/categories') }}">
-            <i class="fa-solid fa-list"></i>
-            <span>Categories</span>
+    <li class="nav-item {{ Request::is('admin/payments') ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="{{ url('/admin/payments') }}">
+            <i class="fa-solid fa-coins"></i>
+            <span>Payments</span>
         </a>
     </li>
+
+    
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 

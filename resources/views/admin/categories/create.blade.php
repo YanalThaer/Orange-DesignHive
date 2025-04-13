@@ -18,21 +18,9 @@
                     <input type="text" class="form-control" id="name" name="name" placeholder="Enter category name" required>
                 </div>
                 <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter category description"></textarea>
-                </div>
-                <div class="form-group">
                     <label for="image">Image</label>
-                    <input type="text" class="form-control-file" id="image" name="image">
+                    <input type="file" class="form-control-file" id="image" name="image" required>
                 </div>
-                {{-- this is wrong
-                i will fix it later --}}
-                <div class="form-group">
-                    <label for="admin_id">Your ID --this will be removed when the login/register is built</label>
-                    <input type="number" class="form-control" id="admin_id" name="admin_id" rows="3" placeholder="Enter Your ID Please"></textarea>
-                </div>
-                {{-- this is wrong
-                so very wrong --}}
                 <button type="submit" class="btn btn-primary">Add Category</button>
                 <a href="{{ route('categories.index') }}" class="btn btn-secondary">Cancel</a>
             </form>

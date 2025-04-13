@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'DesignHive | Admin Add Admin')
 @section('content')
-
 <div class="container-fluid">
     <h1 class="h3 mb-0 text-gray-800">Add New Admin</h1>
     <div class="card shadow mb-4">
@@ -26,7 +25,7 @@
                 <div class="form-group">
                     <label for="role">Role</label>
                     <select class="form-control" id="role" name="role" required>
-                        <option value="Admin">Admin</option>
+                        <option value="admin">Admin</option>
                         <option value="superadmin">Super Admin</option>
                     </select>
                 </div>

@@ -19,9 +19,9 @@ class ProjectFactory extends Factory
         return [
             'title' => fake()->sentence(),
             'description' => fake()->paragraph(),
-            'image' => fake()->imageUrl(800, 600, 'art', true),
             'user_id' => fake()->numberBetween(1,10),
             'category_id' => fake()->numberBetween(1,10),
+            'featured_post' => fake()->boolean(),
         ];
     }
 }

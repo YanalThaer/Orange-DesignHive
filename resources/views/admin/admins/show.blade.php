@@ -38,15 +38,52 @@
         </div>
     </div>
 
+    {{-- Tags Added by Admin --}}
+    <div class="card shadow mb-4 mt-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Tags Added by {{ $admin->name }}</h6>
+        </div>
+        <div class="card-body">
+            @if($admin->tags->isNotEmpty())
+                <ul class="list-group">
+                    @foreach($admin->tags as $tag)
+                        <li class="list-group-item">{{ $tag->name }}</li>
+                    @endforeach
+                </ul>
+            @else
+                <p>No tags added by this admin.</p>
+            @endif
+        </div>
+    </div>
+
+    {{-- Categories Added by Admin --}}
+    <div class="card shadow mb-4 mt-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Categories Added by {{ $admin->name }}</h6>
+        </div>
+        <div class="card-body">
+            @if($admin->categories->isNotEmpty())
+                <ul class="list-group">
+                    @foreach($admin->categories as $category)
+                        <li class="list-group-item">{{ $category->name }}</li>
+                    @endforeach
+                </ul>
+            @else
+                <p>No categories added by this admin.</p>
+            @endif
+        </div>
+    </div>
+
     {{-- Actions --}}
     <div class="mt-3">
-        <a href="{{ route('admins.edit', $admin->id) }}" class="btn btn-primary">Edit</a>
-        <form action="{{ route('admins.destroy', $admin->id) }}" method="POST" style="display:inline-block;">
+        <a href="{{ route('admins.edit', $admin->id) }}" class="btn btn-warning">Edit</a>
+        <form id="delete-form-{{ $admin->id }}" action="{{ route('admins.destroy', $admin->id) }}" method="POST" style="display:inline-block;">
             @csrf
             @method('DELETE')
-            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this admin?')">Delete</button>
         </form>
+        <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $admin->id }})">Delete</button>
         <a href="{{ route('admins.index') }}" class="btn btn-secondary">Back to List</a>
     </div>
 </div>
+
 @endsection

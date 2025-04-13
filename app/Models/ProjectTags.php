@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProjectTags extends Model
 {
@@ -28,5 +29,14 @@ class ProjectTags extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope('excludeSoftDeletedUsers', function (Builder $builder) {
+            $builder->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at');
+            });
+        });
     }
 }

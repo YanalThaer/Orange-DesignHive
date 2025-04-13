@@ -15,7 +15,7 @@
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" style="background-color: #D8B6A4;" href="#page-top">
+    <a class="scroll-to-top rounded" style="background-color: #420363;" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
 
@@ -78,7 +78,39 @@
             }
         });
     </script>
-
+    <script>
+        function confirmDelete(categoryId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the hidden form
+                    document.getElementById(`delete-form-${categoryId}`).submit();
+                }
+            });
+        }
+    </script>
+    {{-- <script>
+        function confirmDelete(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                document.getElementById('delete-form-' + userId).submit();
+            }
+        }
+    </script>
+    <script>
+        function showDeleteConfirmation(projectId) {
+            if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+                // Submit the form if the user confirms
+                document.getElementById(`delete-form-${projectId}`).submit();
+            }
+        }
+    </script> --}}
 </body>
 
 </html>

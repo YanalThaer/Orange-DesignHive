@@ -25,7 +25,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        // dd(Auth::guard('admin')->user());
         return view('admin.admins.create');
     }
 
@@ -34,12 +34,12 @@ class AdminController extends Controller
      */
     public function store(StoreAdminRequest $request)
     {
-        //
+        // dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:admins,email',
             'role' => 'required|string',
-            'password' => 'required|string|min:8', // Add validation for password
+            'password' => 'required|string|min:6', // Add validation for password
         ]);
     
         Admin::create([
@@ -106,5 +106,22 @@ class AdminController extends Controller
         // $admin = Auth::guard('admin')->user();
         // dd($admin);
         return view('admin.dashboard', compact('admin'));
+    }
+
+    public function deleted()
+    {
+        $admins = Admin::onlyTrashed()->get(); // Fetch all soft-deleted admins
+        return view('admin.admins.deleted', compact('admins'));
+    }
+
+    public function restore(Admin $admin)
+    {
+        $admin->restore(); // Restore the soft-deleted admin
+        return redirect()->route('admins.deleted')->with('success', 'Admin restored successfully.');
+    }
+
+    public function showDeleted(Admin $admin)
+    {
+        return view('admin.admins.showdeleted', compact('admin')); // Return the view with the admin data
     }
 }

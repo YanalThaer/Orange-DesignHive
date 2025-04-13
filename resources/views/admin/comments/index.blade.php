@@ -1,4 +1,3 @@
-{{-- filepath: c:\Users\Abdal\OneDrive\Desktop\Orange-DesignHive\resources\views\admin\comments\index.blade.php --}}
 @extends('layouts.admin')
 @section('title', 'DesignHive | Admin Comments')
 @section('content')
@@ -8,10 +7,14 @@
 
     {{-- Display success message --}}
     @if(session('success'))
-        <div id="success-message" class="alert alert-success">
-            {{ session('success') }}
-        </div>
+    <div id="success-message" class="alert alert-success">
+        {{ session('success') }}
+    </div>
     @endif
+
+    <div class="mb-3 d-flex">
+        <a href="{{ route('comments.deleted') }}" class="btn btn-secondary">Deleted Comments</a>
+    </div>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -22,7 +25,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>#</th> <!-- Changed column name to a counter -->
                             <th>Comment Author</th>
                             <th>Project ID</th>
                             <th>Content</th>
@@ -32,17 +35,26 @@
                     <tbody>
                         @foreach($comments as $comment)
                         <tr>
-                            <td>{{ $comment->id }}</td>
+                            <td>{{ $loop->iteration }}</td> <!-- Use $loop->iteration for the counter -->
                             <td>{{ $comment->user->name ?? 'Unknown' }} <br> (ID: {{ $comment->user_id }})</td>
-                            <td>{{ $comment->project_id }}</td>
-                            <td>{{ $comment->content }}</td>
                             <td>
-                                <a href="{{ route('comments.show', $comment->id) }}" class="btn btn-sm btn-info">Show</a>
-                                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:inline-block;">
+                                @php
+                                $projectTitle = $projects->firstWhere('id', $comment->project_id)?->title;
+                                @endphp
+                                {{ $projectTitle ?? 'No Project' }}
+                            </td>
+                            <td>{{ $comment->content }}</td>
+                            <td class="d-flex justify-content-center"> <!-- Align buttons in one line -->
+                                <a href="{{ route('comments.show', $comment->id) }}" class="btn btn-sm btn-info mx-1">
+                                    <i class="fas fa-eye"></i> <!-- Eye icon -->
+                                </a>
+                                <form id="delete-form-{{ $comment->id }}" action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:none;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this comment?')">Delete</button>
                                 </form>
+                                <button type="button" class="btn btn-sm btn-danger mx-1" onclick="confirmDelete({{ $comment->id }})">
+                                    <i class="fas fa-trash"></i> <!-- Trash can icon -->
+                                </button>
                             </td>
                         </tr>
                         @endforeach

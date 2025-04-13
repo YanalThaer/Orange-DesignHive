@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Subscription extends Model
 {
@@ -18,8 +19,8 @@ class Subscription extends Model
         'start_date',
         'end_date',
         'status',
-        
-        
+
+
     ];
 
     public function user()
@@ -27,8 +28,17 @@ class Subscription extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function subscriptionPlan()
+    public function plan()
     {
-        return $this->belongsTo(SubscriptionPlans::class , 'plan_id');  
+        return $this->belongsTo(SubscriptionPlans::class, 'plan_id');
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope('excludeSoftDeletedUsers', function (Builder $builder) {
+            $builder->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at');
+            });
+        });
     }
 }

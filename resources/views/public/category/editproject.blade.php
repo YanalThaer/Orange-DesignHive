@@ -1,9 +1,7 @@
 @extends('layouts.public')
 @section('title', 'DesignHive | Edit Project')
 @section('content')
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
 <style>
     .edit-project-card {
         max-width: 700px;
@@ -71,63 +69,40 @@
         border: 2px solid #420363;
     }
 </style>
-
 <div class="container my-5">
     <div class="edit-project-card">
         <h2>Edit Your Project</h2>
-
         <form action="{{ route('update.project', $project->id) }}" method="POST" enctype="multipart/form-data">
-            @php
-                $imagePath = null;
-                if (empty($project->image)) {
-                    $imagePath = asset('assets/img/blog/blog-hero-2.webp');
-                } elseif (Str::startsWith($project->image, ['http://', 'https://'])) {
-                    $imagePath = $project->image;
-                } else {
-                    $imagePath = asset($project->image);
-                }
-            @endphp
-
             @csrf
             @method('PUT')
-
-            <!-- Image Preview -->
             <div class="text-center">
-                <img src="{{ $imagePath }}" alt="Project Image" class="image-preview">
+                @foreach($project->images as $image)
+                <img src="{{ asset($image->path) }}" alt="Project Image" class="image-preview">
+                @endforeach
             </div>
-
-            <!-- Title -->
             <div class="mb-3">
                 <label><i class="fas fa-heading form-icon"></i>Project Title</label>
                 <input type="text" name="title" value="{{ $project->title }}" class="form-control" required>
             </div>
-
-            <!-- Category -->
             <div class="mb-3">
                 <label><i class="fas fa-tags form-icon"></i>Category</label>
                 <select name="category_id" class="form-control" required>
                     <option value="">-- Select Category --</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ $project->category_id == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
+                    <option value="{{ $category->id }}" {{ $project->category_id == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
                     @endforeach
                 </select>
             </div>
-
-            <!-- Description -->
             <div class="mb-3">
                 <label><i class="fas fa-align-left form-icon"></i>Description</label>
                 <textarea name="description" class="form-control" rows="4" required>{{ $project->description }}</textarea>
             </div>
-
-            <!-- Image Upload -->
             <div class="mb-4">
-                <label><i class="fas fa-image form-icon"></i>Upload New Image</label>
-                <input type="file" name="image" class="form-control mt-2">
+                <label><i class="fas fa-image form-icon"></i>Upload New Images</label>
+                <input type="file" name="images[]" class="form-control mt-2" multiple>
             </div>
-
-            <!-- Submit Button -->
             <div class="text-center">
                 <button type="submit" class="btn btn-update"><i class="fas fa-save"></i> Update Project</button>
             </div>

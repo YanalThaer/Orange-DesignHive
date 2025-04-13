@@ -35,9 +35,9 @@ class AdminPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Admin $admin): bool
+    public function update(Admin $user, Admin $admin): bool
     {
-        return false;
+        return $user->role === 'superadmin';
     }
 
     /**

@@ -20,7 +20,7 @@ $profileimage = Str::startsWith($profileimage, ['http://', 'https://']) ? $profi
 @endphp
 <div id="auth-user-id" data-id="{{ Auth::user()->id }}" style="display:none;"></div>
 <div id="receiver-name" data-name="{{ json_encode($receiver->name) }}" style="display:none;"></div>
-<div style="background-color: white;"> <!-- تغيير اللون الرمادي إلى لون فاتح مثل #f8f9fa -->
+<div style="background-color: white;">
     <div class="container p-3">
         <div class="row">
             <div class="col-md-3 border-0 shadow d-flex flex-column" style="height: 80vh; background-color: #fff; border-radius: 30px; padding:10px 30px;"> <!-- تغيير الخلفية إلى أبيض -->
@@ -33,7 +33,6 @@ $profileimage = Str::startsWith($profileimage, ['http://', 'https://']) ? $profi
                             <input class="form-control border-0" type="search" placeholder="Search" aria-label="Search">
                         </div>
                     </div>
-                    <!-- Users list area -->
                     <div class="col-12 p-0 flex-grow-1" style="overflow-y: auto; max-height: calc(80vh - 60px);">
                         @foreach ($chatUsers as $user)
                         @php

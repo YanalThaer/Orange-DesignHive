@@ -21,8 +21,8 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>User ID</th>
+                            <th>#</th> <!-- Changed column name to a counter -->
+                            <th>User</th>
                             <th>Amount</th>
                             <th>Payment Method</th>
                             <th>Status</th>
@@ -32,13 +32,15 @@
                     <tbody>
                         @foreach($payments as $payment)
                         <tr>
-                            <td>{{ $payment->id }}</td>
+                            <td>{{ $loop->iteration }}</td> <!-- Use $loop->iteration for the counter -->
                             <td>{{ $payment->user->name ?? 'Unknown' }} <br> (ID: {{ $payment->user_id }})</td>
                             <td>${{ number_format($payment->amount, 2) }}</td>
                             <td>{{ $payment->payment_method }}</td>
                             <td>{{ ucfirst($payment->status) }}</td>
-                            <td>
-                                <a href="{{ route('payments.show', $payment->id) }}" class="btn btn-sm btn-info">Show</a>
+                            <td class="d-flex justify-content-center"> <!-- Align buttons in one line -->
+                                <a href="{{ route('payments.show', $payment->id) }}" class="btn btn-sm btn-info mx-1">
+                                    <i class="fas fa-eye"></i> <!-- Eye icon -->
+                                </a>
                             </td>
                         </tr>
                         @endforeach

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateTagRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateTagRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::guard('admin')->check() && in_array(Auth::guard('admin')->user()->role, ['admin', 'superadmin']);
     }
 
     /**

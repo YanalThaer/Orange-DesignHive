@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Project extends Model
 {
@@ -17,18 +18,15 @@ class Project extends Model
     protected $fillable = [
         'title',
         'description',
-        'image',
-        // 'format',
         'category_id',
-        // 'likes_count',
-        // 'comments_count',
-        'user_id'
+        'user_id',
+        'featured_post'
     ];
 
 
     public function user()
     {
-        return $this->belongsTo(User::class , 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function category()
@@ -47,27 +45,32 @@ class Project extends Model
         return $this->hasMany(Comment::class);
     }
 
-    // public function uploads()
-    // {
-    //     return $this->hasMany(UserUploads::class);
-    // }
+    public function images()
+    {
+        return $this->hasMany(ProjectImage::class, 'project_id');
+    }
 
     public function userLike()
     {
         $user = Auth::user();
         if ($user) {
-            return $this->hasOne(Like::class)->where('user_id', $user->id); 
+            return $this->hasOne(Like::class)->where('user_id', $user->id);
         } else {
             return $this->hasOne(Like::class); // or handle the case when user is not authenticated
         }
     }
 
-    public function tags(){
+    public function tags()
+    {
         return $this->belongsToMany(Tag::class, 'project_tags', 'project_id', 'tag_id')->withTimestamps();
     }
 
-    // public function userComment()
-    // {
-    //     return $this->hasOne(Comment::class)->where('user_id', 1); 
-    // }
+    protected static function booted()
+    {
+        static::addGlobalScope('excludeSoftDeletedUsers', function (Builder $builder) {
+            $builder->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at');
+            });
+        });
+    }
 }

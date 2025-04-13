@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -22,7 +23,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        // dd(Auth::guard('admin')->user());
         return view('admin.categories.create');
     }
 
@@ -31,21 +32,27 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|url', // Validate image as a URL
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = $image->getClientOriginalName();
+            $image->move(public_path('images/categories'), $imageName);
+            $imagePath = 'images/categories/' . $imageName;
+        }
+
         Category::create([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
-            'image' => $request->input('image'), // Save the image URL directly
-            'admin_id' => $request->input('admin_id'),
+            'image' => $imagePath,
+            'admin_id' => Auth::guard('admin')->user()->id,
         ]);
-    
-        return redirect()->route('categories.index')->with('success', 'Category created successfully.');  
+
+        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -71,20 +78,32 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|url', // Validate image as a URL
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
+
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            if ($category->image && file_exists(public_path($category->image))) {
+                unlink(public_path($category->image));
+            }
+
+            $image = $request->file('image');
+            $imageName = $image->getClientOriginalName();
+            $image->move(public_path('images/categories'), $imageName);
+            $imagePath = 'images/categories/' . $imageName;
+        } else {
+            $imagePath = $category->image;
+        }
+
         $category->update([
             'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'image' => $request->input('image'), // Update the image URL directly
+            'image' => $imagePath,
         ]);
-    
-        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');  
+
+        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -97,5 +116,20 @@ class CategoryController extends Controller
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
     }
 
- 
+    public function deleted()
+    {
+        $categories = Category::onlyTrashed()->with('admin')->get();
+        return view('admin.categories.deleted', compact('categories'));
+    }
+
+    public function restore(Category $category)
+    {
+        $category->restore();
+        return redirect()->route('categories.deleted')->with('success', 'Category restored successfully.');
+    }
+
+    public function showDeleted(Category $category)
+    {
+        return view('admin.categories.showdeleted', compact('category'));
+    }
 }
