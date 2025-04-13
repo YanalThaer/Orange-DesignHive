@@ -2875,7 +2875,7 @@ section,
     justify-content: center;
     width: 36px;
     height: 36px;
-    background-color: color-mix(in srgb, var(--accent-color), transparent 90%);
+    background-color: var(--accent-color);
     color: var(--surface-color);
     border-radius: 50%;
     margin: 0 0.5rem;

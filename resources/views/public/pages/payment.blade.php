@@ -124,7 +124,7 @@
 
     #planSelect:focus {
         outline: none;
-        border-color: #c770ff;
+        border-color: #420363;
         box-shadow: 0 0 0 0.2rem rgba(199, 112, 255, 0.2);
         background-color: #fff;
     }
@@ -137,12 +137,17 @@
         background-size: 1rem;
         padding-right: 2.5rem;
     }
+
+    a {
+    text-decoration: none !important;
+}
+
 </style>
 <div class="container pb-4">
     <div class="row justify-content-center mb-4">
-        <div class="col-12 text-center">
+        <!-- <div class="col-12 text-center">
             <h2 class="title-text">Build your design career<br>with DesignHive Pro</h2>
-        </div>
+        </div> -->
     </div>
     <div class="row justify-content-center g-4">
         <div class="col-lg-6">
@@ -154,8 +159,8 @@
                         <span class="ms-2"></span>
                     </button>
                     <button class="btn-gpay">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Google_Pay_Logo.svg" alt="GPay" height="20">
-                        <span></span>
+                    <img src="{{ asset('assets/img/qq.png') }}" alt="GPay" height="50" width="50">
+                    <span></span>
                     </button>
                 </div>
                 <p class="text-muted mb-3">or pay another way</p>
@@ -199,7 +204,7 @@
                     <span>Subtotal</span>
                     <span id="subtotalPrice">$720.00</span>
                 </div>
-                <div class="d-flex justify-content-between text-purple fw-semibold mb-3" style="color: #c770ff;">
+                <div class="d-flex justify-content-between text-purple fw-semibold mb-3" style="color: #420363;">
                     <span>Yearly plan discount</span>
                     <span id="discountPrice">-$360.00</span>
                 </div>
@@ -207,7 +212,7 @@
                     <span>Billed Now</span>
                     <span id="billedNow">USD $360.00</span>
                 </div>
-                <button class="subscribe-btn">Subscribe</button>
+                <button class="subscribe-btn" style="background-color: #420363; color: #fff;" data-bs-toggle="modal" data-bs-target="#420363" >Subscribe</button>
                 <p class="text-muted mt-3 small">
                     All sales are charged in USD and all sales are final. You will be charged the full amount immediately. You will be charged yearly thereafter while the subscription is active. Cancel any time.
                 </p>
@@ -217,15 +222,23 @@
 </div>
 <div class="modal fade" id="subscribeModal" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-4">
+        <div class="modal-content border-0 shadow-lg rounded-4 text-center px-4 py-5" style="background-color: #f9f9fb;">
             <div class="modal-body">
-                <h5 class="modal-title mb-3" id="subscribeModalLabel">✅ Subscription Successful!</h5>
-                <p class="text-muted">Thank you for subscribing to DesignHive Pro 🎉</p>
-                <button type="button" class="btn btn-primary mt-3" data-bs-dismiss="modal">Close</button>
+                <div class="mb-3">
+                    <img src="{{ asset('assets/img/logo.png') }}" alt="Success" width="64" height="64">
+                </div>
+                <h5 class="modal-title fw-bold mb-3" id="subscribeModalLabel" style="color: #4CAF50;">
+                    Subscription Successful!
+                </h5>
+                <p class="text-muted">Thank you for subscribing to DesignHive Pro </p>
+                <button type="button" class="btn btn-outline-dark rounded-pill px-4 mt-4" data-bs-dismiss="modal">
+                    Close
+                </button>
             </div>
         </div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const planSelect = document.getElementById('planSelect');

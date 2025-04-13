@@ -652,6 +652,8 @@ class HomeController extends Controller
 
     $categoriesSearch = Category::where('name', 'like', '%' . $searchTerm . '%')->get();
 
+    $subscriptionType = null;
+    $userSubscriptionMessage = ''; 
     if (Auth::check()) {
       $user = Auth::user();
       $likesOnMyProjects = Like::with(['user', 'project'])
@@ -659,17 +661,27 @@ class HomeController extends Controller
         ->get();
 
       $likesCount = $likesOnMyProjects->count();
+
+      $subscription = $user->subscription;
+        $subscriptionType = $subscription?->plan?->name ?? null;
+        
+        if ($subscriptionType === 'Normal') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to access chat. Please subscribe to Pro Designer.';
+        } elseif ($subscriptionType === 'Basic') {
+            $userSubscriptionMessage = 'You need to upgrade your subscription to post featured projects. Please subscribe to Pro Designer.';
+        }
     } else {
       $likesOnMyProjects = null;
       $likesCount = 0;
     }
 
-    return view('public.pages.search', compact('projects', 'categories', 'categoriesSearch', 'unreadUsersCount', 'unreadUsersDetails', 'likesOnMyProjects', 'likesCount'));
+    return view('public.pages.search', compact('projects', 'categories', 'categoriesSearch', 'unreadUsersCount', 'unreadUsersDetails', 'likesOnMyProjects', 'likesCount' , 'subscriptionType', 'userSubscriptionMessage'));
   }
 
   public function editProject($id)
   {
-    $project = Project::findOrFail($id);
+    $project = Project::with('images')->findOrFail($id);
+    // dd($project);
     $categories = Category::all();
     $unreadUsers = Message::where('receiver_id', Auth::id())
       ->where('is_read', false)

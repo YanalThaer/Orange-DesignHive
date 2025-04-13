@@ -19,7 +19,7 @@
         height: 100vh;
     }
 
-    .video-side video {
+    .video-side .full-img {
         position: absolute;
         top: 0;
         left: 0;
@@ -32,15 +32,15 @@
         flex: 1;
         display: flex;
         align-items: center;
-        justify-content: flex-start; /* الفورم يروح شوي لليسار */
+        justify-content: flex-start;
         background-color: #f8f9fa;
         padding-left: 3rem;
     }
 
     .py-4 {
-    padding-top: 0 !important;
-    padding-bottom: 0!important;
-        }
+        padding-top: 0 !important;
+        padding-bottom: 0!important;
+    }
 
     @media (max-width: 768px) {
         .video-side {
@@ -51,19 +51,13 @@
             justify-content: center;
             padding: 1rem;
         }
-        
     }
-
-
 </style>
 
 <div class="auth-container">
-    <!-- Left Side: Video -->
+    <!-- Left Side: Image -->
     <div class="video-side d-none d-md-block">
-        <video autoplay muted loop playsinline>
-            <source src="{{ asset('assets/img/ola.mp4') }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <img src="{{ asset('assets/img/olla.jpg') }}" alt="DesignHive" class="img-fluid full-img">
     </div>
 
     <!-- Right Side: Login Form -->

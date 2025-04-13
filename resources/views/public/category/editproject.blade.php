@@ -69,6 +69,7 @@
         border: 2px solid #420363;
     }
 </style>
+
 <div class="container my-5">
     <div class="edit-project-card">
         <h2>Edit Your Project</h2>
@@ -77,7 +78,11 @@
             @method('PUT')
             <div class="text-center">
                 @foreach($project->images as $image)
-                <img src="{{ asset($image->path) }}" alt="Project Image" class="image-preview">
+                @php
+                $imagePath = $image->image ?? 'assets/img/blog/blog-hero-2.webp';
+                $imagePath = $imagePath ? (Str::startsWith($image, ['http://', 'https://']) ? $imagePath : asset($imagePath)) : asset('assets/img/blog/blog-hero-2.webp');
+                @endphp
+                <img src="{{ $imagePath }}" alt="Project Image" class="image-preview">
                 @endforeach
             </div>
             <div class="mb-3">

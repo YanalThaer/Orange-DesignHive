@@ -19,7 +19,7 @@
         height: 100vh;
     }
 
-    .video-side video {
+    .video-side .full-img {
         position: absolute;
         top: 0;
         left: 0;
@@ -37,11 +37,10 @@
         padding-left: 3rem;
     }
 
-    
     .py-4 {
-    padding-top: 0 !important;
-    padding-bottom: 0!important;
-        }
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
 
     @media (max-width: 768px) {
         .video-side {
@@ -56,12 +55,9 @@
 </style>
 
 <div class="auth-container">
-    <!-- Left Side: Video -->
+    <!-- Left Side: Image -->
     <div class="video-side d-none d-md-block">
-        <video autoplay muted loop playsinline>
-            <source src="{{ asset('assets/img/ola.mp4') }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <img src="{{ asset('assets/img/olla.jpg') }}" alt="DesignHive" class="img-fluid full-img">
     </div>
 
     <!-- Right Side: Sign Up Form -->

@@ -135,54 +135,70 @@
   </section>
 </main>
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Confirm Deletion</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  <div class="modal-dialog modal-dialog-centered d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="modal-content border-0 rounded-4 shadow-lg" style="background-color:rgb(255, 255, 255);">
+
+      <div class="modal-header border-0 pt-4 px-4">
+        <h5 class="modal-title fw-semibold" style="color: black;">
+          Confirm Deletion
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">Are you sure you want to delete this project? This action cannot be undone.</div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+      <div class="modal-body text-center px-4 pb-0">
+        <p class="text-muted fs-6">
+          Are you sure you want to delete this project?<br>
+          <strong>This action cannot be undone.</strong>
+        </p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center gap-2 pb-4">
+        <button class="btn btn-outline-dark rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
         <form id="deleteForm" method="POST">
           @csrf
           @method('DELETE')
-          <button class="btn btn-danger" type="submit">Delete</button>
+          <button class="btn rounded-pill px-4 fw-semibold text-white" type="submit" style="background-color: black;">
+            Delete
+          </button>
         </form>
       </div>
+
     </div>
   </div>
 </div>
-<div class="modal fade" id="loginModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Login Required</h5>
-        <button class="btn-close" data-bs-dismiss="modal"></button>
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="modal-content border-0 rounded-4 shadow-lg" style="background-color: #fdfdff;">
+      <div class="modal-header border-0 pt-4 px-4">
+        <h5 class="modal-title fw-semibold">Login Required</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <p>You need to log in to get in touch with this user.</p>
+
+      <div class="modal-body text-center px-4 pb-0">
+        <p class="text-muted fs-6">You need to log in to get in touch with this user.</p>
       </div>
-      <div class="modal-footer">
-        <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+      <div class="modal-footer border-0 justify-content-center gap-2 pb-4">
+        <a href="{{ route('login') }}" class="btn btn-dark rounded-pill px-4">Login</a>
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
-<div class="modal fade" id="subscriptionModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Upgrade Required</h5>
-        <button class="btn-close" data-bs-dismiss="modal"></button>
+<div class="modal fade" id="subscriptionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="modal-content border-0 rounded-4 shadow-lg" style="background-color: #f8f9ff;">
+      <div class="modal-header border-0 pt-4 px-4">
+        <h5 class="modal-title fw-semibold" style="color: black;">Upgrade Required</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <p>You need to upgrade your subscription to access this feature.</p>
+
+      <div class="modal-body text-center px-4 pb-0">
+        <p class="text-muted fs-6">You need to upgrade your subscription to access this feature.</p>
       </div>
-      <div class="modal-footer">
-        <a href="{{ route('subecribtion') }}" class="btn btn-warning">View Plans</a>
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+      <div class="modal-footer border-0 justify-content-center gap-2 pb-4">
+        <a href="{{ route('subecribtion') }}" class="btn text-white rounded-pill px-4 fw-semibold" style="background-color: BLACK;">View Plans</a>
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -199,14 +215,18 @@
     var getInTouchButton = document.getElementById('getInTouchButton');
     if (getInTouchButton) {
       getInTouchButton.addEventListener('click', function () {
-        if (this.dataset.loginRequired) {
-          new bootstrap.Modal(document.getElementById('loginModal')).show();
-        } else if (this.dataset.subscriptionMessage) {
-          new bootstrap.Modal(document.getElementById('subscriptionModal')).show();
-        } else {
-          window.location.href = "{{ route('chat.index', $user->id) }}";
-        }
-      });
+  const subscriptionMessage = this.dataset.subscriptionMessage;
+  const loginRequired = this.dataset.loginRequired;
+
+  if (loginRequired) {
+    new bootstrap.Modal(document.getElementById('loginModal')).show();
+  } else if (subscriptionMessage === 'Pro Designer') {
+    window.location.href = "{{ route('chat.index', $user->id) }}";
+  } else {
+    new bootstrap.Modal(document.getElementById('subscriptionModal')).show();
+  }
+});
+
     }
   });
 </script>
